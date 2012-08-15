@@ -1,0 +1,66 @@
+<project name="MyProject" default="setup" basedir=".">
+    <description>
+        A build file for the BGI SOAP galaxy code
+    </description>
+    <!-- Set global properties for this build -->
+    <property file="build.properties"/>
+    <property name="galaxy.dir" location="./galaxy"/>
+    <property name="tools.dir" location="./tools"/>
+    <property name="bgisoap.dir" location="./${tools.dir}/bgisoap"/>
+    <property name="build.dir" location="./build"/>
+
+    <target name="init">
+        <!-- Create the time stamp -->
+        <tstamp/>
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build.dir}"/>
+
+        <!-- Check if galaxy-central code has been downloaded -->
+        <available file="./${galaxy.src}" type="dir" property="file.found"/>
+    </target>
+
+    <target name="download-galaxy" depends="init" unless="file.found">
+        <taskdef resource="net/sourceforge/ant4hg/taskdefs/antlib.xml"
+                 classpath="/usr/local/ant4hg/ant4hg-V0.07.jar"/>
+        <!-- clone repository to the given directory -->
+        <echo message="Cloning galaxy repository - this step might take awhile"/>
+        <mkdir dir="./${galaxy.src}"/>
+        <hg cmd="clone" source="https://bitbucket.org/galaxy/${galaxy.src}"
+            destination="./${galaxy.src}"/>
+    </target>
+
+    <target name="setup" depends="download-galaxy">
+        <!-- Copy galaxy source into build directory -->
+        <copy todir="${build.dir}">
+            <fileset dir="./${galaxy.src}"/>
+        </copy>
+        <!-- Copy bgi soap code into build directory -->
+        <copy file="./galaxy/galaxy.sh" todir="${build.dir}"/>
+
+        <!-- Need to update tool_config with list of tool names -->
+        <!-- Need to insert the BGI SOAP declarations in the 3rd line of tool_config -->
+        <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask"
+                 classpath="/usr/local/xmltask/xmltask.jar"/>
+        <xmltask source="./galaxy-central/tool_conf.xml.main" dest="${build.dir}/tool_conf.xml">
+            <insert path="/toolbox" file="./galaxy/tool_config"/>
+        </xmltask>
+
+        <!-- Need to copy files into galaxy build  -->
+        <mkdir dir="./build/tools/bgisoap"/>
+        <copy todir="./build/tools/bgisoap">
+            <fileset dir="./tools/bgisoap">
+                <exclude name="**/*.iml"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clean" description="clean up">
+        <!-- Delete the ${build} and ${dist} directory trees -->
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="purge" depends="clean" description="Removes build directory and galaxy source code">
+        <!-- Delete the ${build} directory tree -->
+        <delete dir="${galaxy.src}"/>
+    </target>
+</project>

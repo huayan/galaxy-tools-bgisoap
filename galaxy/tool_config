@@ -1,0 +1,5 @@
+  <section name="BGI SOAP Package" id="bgisoap">
+    <tool file="bgisoap/soapsnp.xml" />
+    <tool file="bgisoap/soapdenovo.xml" />
+    <tool file="bgisoap/soapdenovo_config.xml" />
+  </section>
