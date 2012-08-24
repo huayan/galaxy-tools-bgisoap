@@ -37,8 +37,7 @@
         <!-- Copy bgi soap code into build directory -->
         <copy file="./galaxy/galaxy.sh" todir="${build.dir}"/>
 
-        <!-- Need to update tool_config with list of tool names -->
-        <!-- Need to insert the BGI SOAP declarations in the 3rd line of tool_config -->
+        <!-- Need to update tool_config with list of tool names --><!-- Need to insert the BGI SOAP declarations in the 3rd line of tool_config -->
         <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask"
                  classpath="/usr/local/xmltask/xmltask.jar"/>
         <xmltask source="./galaxy-central/tool_conf.xml.main" dest="${build.dir}/tool_conf.xml">
@@ -52,6 +51,14 @@
                 <exclude name="**/*.iml"/>
             </fileset>
         </copy>
+
+        <replace
+                file="${build.dir}/galaxy.sh"
+                propertyFile="./build.properties">
+
+            <replacefilter token="@user@"
+          property="galaxy.user"/>
+        </replace>
     </target>
 
     <target name="clean" description="clean up">

@@ -1,12 +1,12 @@
 #!/bin/sh
 #
-# Galaxy init script written by Michael Rusch
+# Galaxy init script written by Michael Rusch and Peter Li
 #
 
 ### BEGIN INIT INFO
 # Provides:                     galaxy
 # Required-Start:               $local_fs $remote_fs $network
-# X-UnitedLinux-Should-Start:   postgresql
+# X-UnitedLinux-Should-Start:
 # Required-Stop:                $local_fs $remote_fs $network
 # X-UnitedLinux-Should-Stop:
 # Default-Start:                3 5
@@ -15,31 +15,28 @@
 # Description:                  Start the Galaxy daemon
 ### END INIT INFO
 
-#. /etc/rc.status
-#rc_reset
+#For log information, see ./paster.log
 
 GALAXY_RUN="./run.sh"
-GALAXY_USER="peterli"
+GALAXY_USER="@user@"
 
 case "$1" in
     start)
-        echo -n "Starting galaxy..."
+        echo "Starting galaxy..."
         sudo -u $GALAXY_USER $GALAXY_RUN --daemon
         rc_done=$rc_done_up
-        #rc_status -v
+        #Check status
+        sudo -u $GALAXY_USER $GALAXY_RUN --status
         ;;
     stop)
-        echo -n "Stopping galaxy..."
+        echo "Stopping galaxy..."
         sudo -u $GALAXY_USER $GALAXY_RUN --stop-daemon
-        #rc_status -v
         ;;
     restart)
         $0 stop
         $0 start
-        #rc_status
         ;;
     *)
         echo "Usage: $0 start|stop|restart"
         exit 1
 esac
-#rc_exit
