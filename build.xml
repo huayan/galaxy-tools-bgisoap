@@ -1,6 +1,6 @@
-<project name="MyProject" default="setup" basedir=".">
+<project name="BGI-SOAP-Galaxy" default="copy" basedir=".">
     <description>
-        A build file for the BGI SOAP galaxy code
+        A build file for the BGI SOAP galaxy wrapper code
     </description>
     <!-- Set global properties for this build -->
     <property file="build.properties"/>
@@ -13,32 +13,34 @@
     <target name="init">
         <!-- Create the time stamp -->
         <tstamp/>
-        <!-- Create the build directory structure used by compile -->
-        <mkdir dir="${build.dir}"/>
-
         <!-- Check if galaxy-central code has been downloaded -->
-        <available file="./${galaxy.src}" type="dir" property="file.found"/>
+        <available file="./${galaxy.src}" type="dir" property="galaxysrc.found"/>
+        <!-- Check build dir -->
+        <available file="./${build.dir}" type="dir" property="build.found"/>
     </target>
 
-    <target name="download-galaxy" depends="init" unless="file.found">
+    <target name="download" depends="init" unless="galaxysrc.found">
         <taskdef resource="net/sourceforge/ant4hg/taskdefs/antlib.xml"
                  classpath="${lib.dir}/ant4hg-V0.07.jar"/>
-        <!-- clone repository to the given directory -->
+        <!-- Clone repository to the given directory -->
         <echo message="Cloning galaxy repository - this step might take awhile"/>
         <mkdir dir="./${galaxy.src}"/>
         <hg cmd="clone" source="https://bitbucket.org/galaxy/${galaxy.src}"
             destination="./${galaxy.src}"/>
     </target>
 
-    <target name="setup" depends="download-galaxy">
+    <target name="build" depends="download" unless="build.found">
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build.dir}"/>
         <!-- Copy galaxy source into build directory -->
         <copy todir="${build.dir}">
             <fileset dir="./${galaxy.src}"/>
         </copy>
-        <!-- Copy bgi soap code into build directory -->
-        <copy file="./galaxy/galaxy.sh" todir="${build.dir}"/>
+    </target>
 
-        <!-- Need to update tool_config with list of tool names --><!-- Need to insert the BGI SOAP declarations in the 3rd line of tool_config -->
+    <target name="copy" depends="build">
+        <!-- Need to update tool_config with list of tool names -->
+        <!-- Need to insert the BGI SOAP declarations in the 3rd line of tool_config -->
         <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask"
                  classpath="${lib.dir}/xmltask.jar"/>
         <xmltask source="./galaxy-central/tool_conf.xml.main" dest="${build.dir}/tool_conf.xml">
@@ -52,10 +54,16 @@
                 <exclude name="**/*.iml"/>
             </fileset>
         </copy>
+        <!-- Copy bgi soap code into build directory -->
+        <copy file="${galaxy.dir}/galaxy.sh" todir="${build.dir}"/>
 
         <replace file="${build.dir}/galaxy.sh" propertyFile="./build.properties">
             <replacefilter token="@user@" property="galaxy.user"/>
         </replace>
+
+        <!-- Make galaxy.sh and run.sh executable -->
+        <chmod file="${build.dir}/galaxy.sh" perm="ugo+x"/>
+        <chmod file="${build.dir}/run.sh" perm="ugo+x"/>
     </target>
 
     <target name="clean" description="clean up">
