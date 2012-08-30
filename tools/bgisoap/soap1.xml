@@ -1,0 +1,294 @@
+<tool id="soap1" name="Map with SOAP 1" version="0.1">
+    <requirements>
+      <requirement type="package">bgisoap</requirement>
+    </requirements>
+    <command interpreter="python">
+        soap1_paired_end_alignment.py
+
+        ## Configure reference genome
+        --ref_seq=$ref_seq
+
+        ## Outputs
+        --unpaired_alignment_out=$unpaired_alignment_out
+        --alignment_out=$alignment_out
+
+        ## Check if doing single-end or paired-end mapping
+        --analysis_settings_type=$analysis_settings.analysis_type
+
+        #if $analysis_settings.analysis_type == "single"
+            --forward_set=$analysis_settings.forward_set
+        #else
+            --forward_set=$analysis_settings.forward_set
+            --reverse_set=$analysis_settings.reverse_set
+            --min_insert_size=$analysis_settings.min_insert_size
+            --max_insert_size=$analysis_settings.max_insert_size
+        #end if
+
+        ## Check if using default or custom parameters
+        --default_full_settings_type=$default_full_settings.settings_type
+
+        #if $default_full_settings.settings_type == "full"
+            --seed_size=$seed_size
+            --max_mismatches=$max_mismatches
+            --max_gap_size=$max_gap_size
+            --max_best_hits=$max_best_hits
+            --gap_exist=$gap_exist
+            --initial_quality=$initial_quality
+            --trim=$trim
+            --filter=$filter
+            --report_repeats=$report_repeats
+            --read_id=$read_id
+            --ref_chain_align=$ref_chain_align
+            --num_processors=$num_processors
+        #end if
+
+  </command>
+  <inputs>
+    <param name="ref_seq"
+           type="data"
+           format="input"
+           label="Select a reference sequence">
+    </param>
+    <conditional name="analysis_settings">
+        <param name="analysis_type"
+               type="select"
+               label="What type of mapping do you want to perform?">
+            <option value="single">Single</option>
+            <option value="paired">Paired</option>
+        </param>
+        <when value="single">
+            <param name="forward_set"
+                   type="data"
+                   format="input"
+                   label="FASTA file">
+            </param>
+            <!--
+            <param name="seed_size"
+                   type="integer"
+                   value="10"
+                   label="Seed size?">
+            </param>
+            -->
+        </when>
+        <when value="paired">
+            <param name="forward_set"
+                   type="data"
+                   format="input"
+                   label="Forward FASTA file">
+            </param>
+            <param  name="reverse_set"
+                    type="data"
+                    format="input"
+                    label="Reverse FASTA file">
+            </param>
+            <param name="min_insert_size"
+                   type="integer"
+                   label="Minimal insert size for alignments"
+                   value="400">
+            </param>
+            <param name="max_insert_size"
+                   type="integer"
+                   label="Maximum insert size for alignments"
+                   value="600">
+            </param>
+        </when>
+    </conditional>
+    <conditional name="default_full_settings">
+        <param name="settings_type"
+               type="select"
+               label="SOAP settings to use"
+               help="Default settings is suitable for most mapping needs. If you want full control, use Full parameter list">
+            <option value="default">Default</option>
+            <option value="full">Full parameter list</option>
+        </param>
+        <when value="default"/>
+        <when value="full">
+            <param name="seed_size"
+                   type="integer"
+                   value="10"
+                   label="Seed size?"/>
+            <param name="max_mismatches"
+                   type="integer"
+                   value="2"
+                   label="Maximum number of mismatches allowed on a read?"/>
+            <param name="max_gap_size"
+                   type="integer"
+                   value="0"
+                   label="Maximum gap size allowed on a read?"/>
+            <param name="max_best_hits"
+                   type="integer"
+                   value="0"
+                   label="Maximum number of equal best hits to count?"/>
+            <param name="gap_exist"
+                   type="integer"
+                   value="3"
+                   label="Will not allow gap exist inside n-bp edge of a read"/>
+            <param name="initial_quality"
+                   type="text"
+                   value="@"
+                   label="Initial quality"
+                   help="Illumina uses '@', Sanger Institute uses '!'"/>
+            <param name="trim"
+                   type="integer"
+                   value="0"
+                   label="Trim 3' end due to low quality?"
+                   help="0: don't trim;
+	                   1-10: trim n-bps at 3-end for all reads;
+	                   11-20: trim first bp and (n-10)-bp at 3-end for all reads;
+	                   21-30: trim (n-20)-bp at 3-end and redo alignment if the original read have no hit;
+	                   31-40: trim first bp and (n-30)-bp at 3-end and redo alignment if the original read have no hit;
+	                   41-50: iteratively trim (n-40)-bp at 3-end until getting hits;
+	                   51-60: if no hit, trim first bp and iteratively trim (n-50)bp at 3-end until getting hits"/>
+            <param name="filter"
+                   type="integer"
+                   value="5"
+                   label="Filter low-quality reads containing >n Ns"/>
+            <param name="report_repeats"
+                   type="select"
+                   value="0"
+                   label="Report repeat hits?">
+                <option value="0">None</option>
+                <option value="1">Random</option>
+                <option value="2">All</option>
+            </param>
+            <param name="read_id"
+                   type="text"
+                   value="name"
+                   label="Read ID in output file"/>
+            <param name="ref_chain_align"
+                   type="select"
+                   value="name"
+                   label="Do alignment on which reference chain?">
+                <option value="0">Both</option>
+                <option value="1">Forward only</option>
+                <option value="2">Reverse only</option>
+            </param>
+            <param name="num_processors"
+                   type="integer"
+                   value="1"
+                   label="Number of processors to use"/>
+        </when>
+    </conditional>
+  </inputs>
+  <outputs>
+    <data name="alignment_out"
+          type="data"
+          format="output"
+          label="An alignment of paired reads on a reference sequence">
+    </data>
+    <data name="unpaired_alignment_out"
+          type="data"
+          format="output"
+          label="Unpaired alignment hits">
+    </data>
+  </outputs>
+  <tests>
+      <test>
+          <param name="forward_set"
+                 value="bgisoap/soap1/test_PE1.fa"
+                 ftype="fasta"/>
+          <param name="reverse_set"
+                 value="bgisoap/soap1/test_PE2.fa"
+                 ftype="fasta"/>
+          <param name="ref_seq"
+                 value="bgisoap/soap1/ref.fa"
+                 ftype="fasta"/>
+          <param name="min_insert_size"
+                 value="100"/>
+          <param name="max_insert_size"
+                 value="150"/>
+          <output name="alignment_out"
+                  file="bgisoap/soap1/out.sop"/>
+          <output name="unpaired_alignment_out"
+                  file="bgisoap/soap1/single.sop"/>
+      </test>
+  </tests>
+<help>
+
+**What it does**
+SOAP is a program that performs efficient gapped and ungapped alignment of short oligonucleotides onto reference sequences. The program is designed to handle short reads generated by parallel sequencing using the new generation Illumina-Solexa sequencing technology. SOAP is compatible with numerous applications, including single-read or pair-end resequencing, small RNA discovery and mRNA tag sequence mapping. SOAP is a command-driven program, which supports multi-threaded parallel computing, and has a batch module for multiple query sets.
+
+-----
+
+**Single-end sequencing**
+SOAP will allow either a certain number of mismatches or one continuous gap for aligning a read onto the reference sequence. The best hit of each read which has minimal number of mismatches or smaller gap will be reported. For multiple equalbest hits, the user can instruct the program to report all, or randomly report one, or disregard all of them. Since the typical read length is 25-50 bp, hits with too many mismatches are unreliable which are hard to distinguish with random matches. By default, the program will allow at most two mismatches. Between two haplotype genome sequences, occurrence of single nucleotide polymorphism is much higher than that of small insertions or deletions, so ungapped hits have precedence over gapped hits. For gapped alignment only one continuous gap with a size ranging from 1 to 3 bp is accepted, while no mismatches are permitted in the flanking regions to avoid ambiguous gaps. The gap could be either insertion or deletion in the query or the reference sequence. As the intrinsic character of the sequencing technology, errors will accumulate during the sequencing process. Reads always exhibit a much higher number of sequencing errors at the 3'-end, which sometimes make them unalignable to the reference sequences. To deal with the problem, SOAP can iteratively trim several basepairs at the 3'-end and redo the alignment, until hits are detected or the remaining sequence is too short for specific alignment.
+
+**Pair-end sequencing**
+This form of sequencing involves sequencing both ends of a DNA fragment. Two reads belonging to a pair will always have a settled relative orientation and approximate distance between each other on the genome. The technology can significantly improve the accuracy of resequencing mapping, and is a powerful method for detection of structural variants including copy number variations (CNVs), rearrangements, inversions and etc. SOAP is able to align a pair of reads simultaneously. A pair will be aligned when two reads are mapped with the right orientation relationship and proper distance. Similar filter as single-read alignment, a certain number of mismatches are allowed in one or both reads of the pair. For gapped alignment, gap is only permitted on one read, and the other end should match exactly.
+
+-----
+
+**Format of output**
+A single line corresponds to one hit. Each contains columns of data separated by a tab character. These columns contain the following information:
+
+id
+    An identifier for read sequence.
+
+seq
+    The full sequence of the read. The read will be converted to the complementary sequence if mapped on the reverse chain of the reference.
+
+qual
+    The quality of the sequence. This will be converted to the complementary sequence if mapped to the reverse chain.
+
+number of hits
+    The number of best hits. Reads with no hits are ignored.
+
+a/b
+    A flag used for pair-end alignment that distinguishes which file the read is belongs to.
+
+length
+    The read length. If aligned after trimming, it will report the length of the trimmed read.
+
++/-
+	Informs whether the alignment is occurs on the direct(+) or reverse(-) chain of the reference
+
+chr
+	id of reference sequence;
+
+location
+	The location of the first base pair on the reference, counted from 1.
+
+types
+    The type of hit associated with the read
+	    0:	exact match.
+	    1-100	RefAllele->OffsetQueryAlleleQual":	number of mismatches, followed by detailed mutation sites and switch of allele types. Offset is relative to the initial location on reference. 'OffsetAlleleQual': offset, allele, and quality. Example: "2 A->10T30	C->13A32" means there are two mismatches, one on location+10 of reference, and the other on location+13	of reference. The allele on reference is A and C respectively while query allele type and its  quality is T,30 and A,32.
+	    100+n Offset":	n-bp insertion on read. Example: "101 15" means 1-bp insertion on read, start after location+15 on reference.
+	    200+n Offset":	n-bp deletion on read. Example: "202 16" means 2-bp deletion on query, start after 16bp on reference.
+
+-----
+
+**Algorithm**
+The program initially loads reference sequences into RAM and creates hash tables for seed indexing. For each query, a search is performed for seeded hits followed by alignment of the read to the reference.
+
+1) Load in reference sequences
+
+In contrast to Eland and Maq which load reads into RAM, SOAP stores the reference sequences into memory. Two bits for each base, so one byte can store 4 bps. In theory, it will need L/4 bytes for reference with total sequence size L.
+
+2) Suppose a read is splitted into 4 parts-a,b,c,d, two mismatches will be distributed on at most two of the 4 parts at the same time. So if use the combination of two parts as seed, and check for mismatches in the remainning parts, it will be able to get all hits with up to 2 mismatches. There are six combinations - ab,ac,ad,bc,bd,cd, and essentially 3 types of seeds-ab,ac,ad. So we build 3 index tables. To save RAM, we set a skip of 3-bp on the reference. The strategy is essentially the same as that used in the Eland and Maq program.
+
+3) look up table
+
+We used look up table to judge how many mismatches between reference and read. To have best efficiency, the table used 3 bytes to check a fragment of 12-bp on a time. The table occupied 2^24=16Mb RAM.
+
+4) search for hits
+
+We will search for identical hits first, if no hits, then 1-mismatch hits will be picked up, then 2-mismatch hits, then gapped hits.
+
+-----
+
+**Important notes**
+1) Simple rules to set parameter of seed size
+	a)S*2+3=Min(Read length);
+	b)Hash size=4^S, normally S=12bp;
+	c)Larger S will be faster
+
+2) Avoid very short sequence in reference. The program will collapse if there are some reference sequences with size shorter than the query reads. So please make sure	that short reference sequences were prefiltered before launching the alignment.
+
+-----
+
+**Citation**
+
+If you find SOAP did help your research, please cite the paper:
+	Ruiqiang Li, et. al. SOAP: short oligonucleotide alignment program. Bioinformatics. 2008 24: 713-714
+</help>
+</tool>
