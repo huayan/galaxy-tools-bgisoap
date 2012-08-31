@@ -15,47 +15,50 @@ def __main__():
     #Parse Command Line
     parser = optparse.OptionParser()
     parser.add_option( '', '--command_select', dest='command_select', help='Select the kmer version.')
+    parser.add_option( '', '--process_select', dest='process_select', help='Select the process.')
     parser.add_option( '', '--config_file', dest='config_file', help='The input SOAPdenovo configuration file.' )
-    parser.add_option( '', '--output_prefix', dest='output_prefix', help='The output file.' )
+    #parser.add_option( '', '--kmer', dest='kmer', help='The k-mer size.')
+    parser.add_option( '', '--output_prefix', dest='output_prefix', help='The output prefix file.' )
+    parser.add_option( '', '--output_edge', dest='output_edge', help='The output edge file.' )
+    parser.add_option( '', '--output_preGraphBasic', dest='output_preGraphBasic', help='The output preGraphBasic file.')
+    parser.add_option( '', '--output_preArc', dest='output_preArc', help='The output preArc file.')
+    parser.add_option( '', '--output_vertex', dest='output_vertex', help='The output vertex file.')
+    parser.add_option( '', '--output_contig', dest='output_contig', help='The output contig file.')
+    parser.add_option( '', '--output_scafSeq', dest='output_scafSeq', help='The output scafSeq file.')
     ( options, args ) = parser.parse_args()  
 
 
-    tmp_dir = tempfile.mkdtemp()
-
-#    print command_select
-    
+    tmp_dir = tempfile.mkdtemp()    
 
     try:
         # exit if input file empty
         if os.path.getsize( options.config_file ) == 0:
             raise Exception, 'Initial file empty'
-        # Sort alignments by leftmost coordinates. File <out.prefix>.bam will be created. This command
-        # may also create temporary files <out.prefix>.%d.bam when the whole alignment cannot be fitted
-        # into memory ( controlled by option -m ).
-#        tmp_sorted_aligns_file = tempfile.NamedTemporaryFile( dir=tmp_dir )
-#        tmp_sorted_aligns_file_base = tmp_sorted_aligns_file.name
-#        tmp_sorted_aligns_file_name = '%s.consesus' % tmp_sorted_aligns_file.name
-#        tmp_sorted_aligns_file.close()
-
-#        print command_select
 
         if options.command_select == "31mer": command0 = "SOAPdenovo_31mer"
         elif options.command_select == "63mer": command0 = "SOAPdenovo_63mer"
         elif options.command_select == "127mer": command0 = "SOAPdenovo_127mer"
-        print command0
+        #print command0
 
-        command = '%s all -s %s -o %s' % (command0, options.config_file, options.output_prefix )
-        print command
+
+        if options.process_select == "all": process0 = "all -s"
+        elif options.process_select == "pregraph": process0 = "pregraph -s"
+        elif options.process_select == "contig": process0 = "contig -s"
+        elif options.process_select == "map": process0 = "map -s"
+        elif options.process_select == "scaff": process0 = "scaff -g"
+        #print process0 
+
+       # command = '%s %s %s -K 55 -o %s -F' % (command0, process0, options.config_file, options.output_prefix )
+        command = '%s %s %s -K 55 -o %s' % (command0, process0, options.config_file, options.output_prefix)
+	# print command
         tmp = tempfile.NamedTemporaryFile( dir=tmp_dir ).name
-        print tmp
+       # print tmp
         tmp_stderr = open( tmp, 'wb' )
         proc = subprocess.Popen( args=command, shell=True, cwd=tmp_dir, stderr=tmp_stderr.fileno() )
         returncode = proc.wait()
         tmp_stderr.close()
-
-        #print os.path.getsize( tmp_sorted_aligns_file_name)
-
-        # get stderr, allowing for case where it's very large
+ 
+       # get stderr, allowing for case where it's very large
         tmp_stderr = open( tmp, 'rb' )
         stderr = ''
         buffsize = 1048576
@@ -67,23 +70,45 @@ def __main__():
         except OverflowError:
             pass
         tmp_stderr.close()
-        if returncode != 0:
-            raise Exception, stderr
+          
+        print "test here."
+        filename = options.output_prefix+'.edge' 
+        shutil.copyfile(filename,options.output_edge)
+        
+        filename = options.output_prefix+'.preGraphBasic'
+        shutil.copyfile(filename,options.output_preGraphBasic)
+
+        filename = options.output_prefix+'.preArc'
+        shutil.copyfile(filename,options.output_preArc)
+
+        filename = options.output_prefix+'.vertex'
+        shutil.copyfile(filename,options.output_vertex)
+
+        filename = options.output_prefix+'.contig'
+        shutil.copyfile(filename,options.output_contig)
+
+        #no scafSeq file found, use scaf temporarily.
+	filename = options.output_prefix+'.scaf'
+        shutil.copyfile(filename,options.output_scafSeq)
+
+        #if returncode != 0:
+        #    raise Exception, stderr
         # exit if sorted BAM file empty
-        if os.path.getsize( options.output_prefix) == 0:
+ 	filename = options.output_prefix+'.contig'
+        if os.path.getsize( filename) == 0:
             raise Exception, 'The output file empty'
     except Exception, e:
         #clean up temp files
         if os.path.exists( tmp_dir ):
             shutil.rmtree( tmp_dir )
         stop_err( 'Error in running soapdenovo from (%s), %s' % ( options.config_file, str( e )))
-
+    
 
     #clean up temp files
     if os.path.exists( tmp_dir ):
         shutil.rmtree( tmp_dir )
     # check that there are results in the output file
-    if os.path.getsize( options.output_prefix ) > 0:
+    if os.path.getsize( options.output_edge ) > 0:
         sys.stdout.write( 'Running End Sucessfully!' )
     else:
         stop_err( 'The output file is empty, there may be an error with your input file.' )
