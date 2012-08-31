@@ -3,7 +3,7 @@
       <requirement type="package">bgisoap</requirement>
     </requirements>
     <command interpreter="python">
-        soap1_paired_end_alignment.py
+        soap1.py
 
         ## Configure reference genome
         --ref_seq=$ref_seq
