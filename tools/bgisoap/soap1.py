@@ -15,21 +15,6 @@ def cleanup_before_exit(tmp_dir):
     if tmp_dir and os.path.exists(tmp_dir):
         shutil.rmtree(tmp_dir)
 
-#For retrieving information from ini files
-def ConfigSectionMap(section):
-    dict1 = {}
-    options = Config.options(section)
-    for option in options:
-        try:
-            dict1[option] = Config.get(section, option)
-            if dict1[option] == -1:
-                DebugPrint("skip: %s" % option)
-        except:
-            print("exception on %s!" % option)
-            dict1[option] = None
-    return dict1
-
-
 def __main__():
     #Parse command line
     parser = optparse.OptionParser()
@@ -64,18 +49,15 @@ def __main__():
     #Create temp directory
     tmp_dir = tempfile.mkdtemp()
 
-    #Retrieve path for SOAP 1 executable
-    path = ConfigSectionMap("SOAP1")['path']
-
     #Set up command line call
     if opts.analysis_settings_type == "single" and opts.default_full_settings_type == "default":
-        cmd = path % ' -d %s -a %s -o %s' % (opts.ref_seq, opts.forward_set, opts.alignment_out)
+        cmd = "soap1 -d %s -a %s -o %s" % (opts.ref_seq, opts.forward_set, opts.alignment_out)
     elif  opts.analysis_settings_type == "paired" and opts.default_full_settings_type == "default":
-        cmd = path % " -d %s -a %s -b %s -o %s -2 %s -m %s -x %s" % (opts.ref_seq, opts.forward_set, opts.reverse_set, opts.alignment_out, opts.unpaired_alignment_out, opts.min_insert_size, opts.max_insert_size)
+        cmd = "soap1 -d %s -a %s -b %s -o %s -2 %s -m %s -x %s" % (opts.ref_seq, opts.forward_set, opts.reverse_set, opts.alignment_out, opts.unpaired_alignment_out, opts.min_insert_size, opts.max_insert_size)
     elif opts.analysis_settings_type == "single" and opts.default_full_settings_type == "full":
-        cmd = path % " -d %s -a %s -o %s -s %s -v %s -g %s -w %s -e %s -z %s -c %s -f %s -r %s -t %s -n %s -p %s" % (opts.ref_seq, opts.fasta_reads, opts.alignment_out, opts.seed_size, opts.max_mismatches, opts.max_gap_size, opts.max_best_hits, opts.gap_exist, opts.initial_quality, opts.trim, opts.filter, opts.report_repeats, opts.read_id, opts.ref_chain_align, opts.num_processors)
+        cmd = "soap1 -d %s -a %s -o %s -s %s -v %s -g %s -w %s -e %s -z %s -c %s -f %s -r %s -t %s -n %s -p %s" % (opts.ref_seq, opts.fasta_reads, opts.alignment_out, opts.seed_size, opts.max_mismatches, opts.max_gap_size, opts.max_best_hits, opts.gap_exist, opts.initial_quality, opts.trim, opts.filter, opts.report_repeats, opts.read_id, opts.ref_chain_align, opts.num_processors)
     elif opts.analysis_settings_type == "paired" and opts.default_full_settings_type == "full":
-        cmd = path % " -d %s -a %s -b %s -o %s -2 %s -m %s -x %s -s %s -v %s -g %s -w %s -e %s -z %s -c %s -f %s -r %s -t %s -n %s -p %s" % (opts.ref_seq, opts.forward_set, opts.reverse_set, opts.alignment_out, opts.unpaired_alignment_out, opts.min_insert_size, opts.max_insert_size, opts.seed_size, opts.max_mismatches, opts.max_gap_size, opts.max_best_hits, opts.gap_exist, opts.initial_quality, opts.trim, opts.filter, opts.report_repeats, opts.read_id, opts.ref_chain_align, opts.num_processors)
+        cmd = "soap1 -d %s -a %s -b %s -o %s -2 %s -m %s -x %s -s %s -v %s -g %s -w %s -e %s -z %s -c %s -f %s -r %s -t %s -n %s -p %s" % (opts.ref_seq, opts.forward_set, opts.reverse_set, opts.alignment_out, opts.unpaired_alignment_out, opts.min_insert_size, opts.max_insert_size, opts.seed_size, opts.max_mismatches, opts.max_gap_size, opts.max_best_hits, opts.gap_exist, opts.initial_quality, opts.trim, opts.filter, opts.report_repeats, opts.read_id, opts.ref_chain_align, opts.num_processors)
 
     print cmd
 
