@@ -1,6 +1,7 @@
   <label id="bgi" text="BGI SOAP Package"/>
   <section name="NGS: Mapping" id="bgi_ngs_mapping">
     <tool file="bgisoap/soap1.xml"/>
+    <tool file="bgisoap/soap2.xml"/>
   </section>
   <section name="NGS: Indel Analysis" id="bgi_indel_analysis">
     <tool file="bgisoap/soapsnp.xml"/>
