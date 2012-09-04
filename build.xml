@@ -1,6 +1,6 @@
 <project name="BGI-SOAP-Galaxy" default="copy" basedir=".">
     <description>
-        A build file for the BGI SOAP galaxy wrapper code
+        A build file for installing BGI SOAP into Galaxy
     </description>
     <!-- Set global properties for this build -->
     <property file="build.properties"/>
@@ -9,6 +9,9 @@
     <property name="bgisoap.dir" location="./${tools.dir}/bgisoap"/>
     <property name="build.dir" location="./build"/>
     <property name="lib.dir" location="./lib"/>
+    <property name="galaxy.build.dir" location="${build.dir}/${galaxy.src}"/>
+    <property name="tooldep.build.dir" location="${build.dir}/tooldep"/>
+    <property name="tooldep.dir" location="./tooldep"/>
 
     <target name="init">
         <!-- Create the time stamp -->
@@ -32,10 +35,20 @@
     <target name="build" depends="download" unless="build.found">
         <!-- Create the build directory structure used by compile -->
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${galaxy.build.dir}"/>
+        <mkdir dir="${tooldep.build.dir}"/>
         <!-- Copy galaxy source into build directory -->
-        <copy todir="${build.dir}">
-            <fileset dir="./${galaxy.src}"/>
+        <copy todir="${galaxy.build.dir}">
+            <fileset dir="${galaxy.src}">
+                    <exclude name="**/*universe_wsgi.ini.sample"/>
+            </fileset>
         </copy>
+        <!-- Copy bgisoap tooldep directory into build directory -->
+        <copy todir="${tooldep.build.dir}">
+            <fileset dir="${tooldep.dir}"/>
+        </copy>
+        <!-- Create default symlink to 0.1 folder -->
+        <symlink link="${tooldep.build.dir}/bgisoap/default" resource="${tooldep.build.dir}/bgisoap/0.1"/>
     </target>
 
     <target name="copy" depends="build">
@@ -43,36 +56,42 @@
         <!-- Need to insert the BGI SOAP declarations in the 3rd line of tool_config -->
         <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask"
                  classpath="${lib.dir}/xmltask.jar"/>
-        <xmltask source="./galaxy-central/tool_conf.xml.main" dest="${build.dir}/tool_conf.xml">
+        <xmltask source="./galaxy-central/tool_conf.xml.main" dest="${galaxy.build.dir}/tool_conf.xml">
             <insert path="/toolbox" file="./galaxy/tool_config"/>
         </xmltask>
 
         <!-- Need to copy files into galaxy build  -->
-        <mkdir dir="./build/tools/bgisoap"/>
-        <copy todir="./build/tools/bgisoap">
-            <fileset dir="./tools/bgisoap">
+        <mkdir dir="${galaxy.build.dir}/tools/bgisoap"/>
+        <copy todir="${galaxy.build.dir}/tools/bgisoap">
+            <fileset dir="${tools.dir}/bgisoap">
                 <exclude name="**/*.iml"/>
             </fileset>
         </copy>
         <!-- Copy bgi soap code into build directory -->
-        <copy file="${galaxy.dir}/galaxy.sh" todir="${build.dir}"/>
+        <copy file="${galaxy.dir}/galaxy.sh" todir="${galaxy.build.dir}"/>
 
-        <replace file="${build.dir}/galaxy.sh" propertyFile="./build.properties">
+        <replace file="${galaxy.build.dir}/galaxy.sh" propertyFile="./build.properties">
             <replacefilter token="@user@" property="galaxy.user"/>
         </replace>
 
         <!-- Make galaxy.sh and run.sh executable -->
-        <chmod file="${build.dir}/galaxy.sh" perm="ugo+x"/>
-        <chmod file="${build.dir}/run.sh" perm="ugo+x"/>
+        <chmod file="${galaxy.build.dir}/galaxy.sh" perm="ugo+x"/>
+        <chmod file="${galaxy.build.dir}/run.sh" perm="ugo+x"/>
+
+        <!-- Copy universe_wsgi.ini.sample file into galaxy build -->
+        <copy file="${galaxy.dir}/universe_wsgi.ini.sample" todir="${galaxy.build.dir}"/>
+        <replace file="${galaxy.build.dir}/universe_wsgi.ini.sample" propertyFile="./build.properties">
+            <replacefilter token="@tooldep_path@" property="tooldep.location"/>
+        </replace>
     </target>
 
     <target name="clean" description="clean up">
-        <!-- Delete the ${build} and ${dist} directory trees -->
+        <!-- Delete the ${build} directory trees -->
         <delete dir="${build.dir}"/>
     </target>
 
     <target name="purge" depends="clean" description="Removes build directory and galaxy source code">
-        <!-- Delete the ${build} directory tree -->
+        <!-- Delete the galaxy src directory -->
         <delete dir="${galaxy.src}"/>
     </target>
 </project>
