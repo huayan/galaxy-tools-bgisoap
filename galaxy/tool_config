@@ -10,3 +10,6 @@
     <tool file="bgisoap/soapdenovo.xml"/>
     <tool file="bgisoap/soapdenovo_config.xml"/>
   </section>
+  <section name="NGS: Splice Detection" id="bgi_de_novo_assembly">
+      <tool file="bgisoap/soapsplice.xml"/>
+  </section>
