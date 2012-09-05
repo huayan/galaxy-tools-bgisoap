@@ -20,9 +20,17 @@
         <available file="./${galaxy.src}" type="dir" property="galaxysrc.found"/>
         <!-- Check build dir -->
         <available file="./${build.dir}" type="dir" property="build.found"/>
+        <!-- Check if hg is on the command line, break if not -->
+        <property environment="env" />
+        <available file="hg" filepath="${env.PATH}" property="hg.present"/>
+        <echo message="Is hg present on path?: ${hg.present}"/>
     </target>
 
-    <target name="download" depends="init" unless="galaxysrc.found">
+    <target name="fail" depends="init" unless="hg.present">
+        <fail message="Mercurial is not on available on the path. Please install Mercurial."/>
+    </target>
+
+    <target name="download" depends="fail" unless="galaxysrc.found">
         <taskdef resource="net/sourceforge/ant4hg/taskdefs/antlib.xml"
                  classpath="${lib.dir}/ant4hg-V0.07.jar"/>
         <!-- Clone repository to the given directory -->
