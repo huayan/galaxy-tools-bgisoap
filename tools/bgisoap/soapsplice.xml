@@ -1,189 +1,191 @@
-<tool id="soapsplice" name="Detect splice junction sites from RNA-Seq data" version="0.1">
+<tool id="soapsplice" name="SOAPsplice" version="0.1">
+    <description>detection of splice junctions</description>
+    <command interpreter="python">
+        soapsplice.py
+
+        ## Reference source
+        --fileSource=$genomeSource.refGenomeSource
+        #if $genomeSource.refGenomeSource == "history":
+            ##build index on the fly
+            --ref="${genomeSource.ownFile}"
+            --dbkey=$dbkey
+        #else:
+            ##use precomputed indexes
+            --ref="${genomeSource.indices.fields.path}"
+            --do_not_build_index
+            #end if
+
+        ## Input file(s)
+        --input1=$paired.input1
+        #if $paired.sPaired == "paired":
+            --input2=$paired.input2
+            #end if
+
+        ## Prefix of output files which can a file directory
+        --output_dir_prefix=$output_dir_prefix
+
+        ## Insert length
+        --insert_length=$insert_length
+
+        ## Output files for paired-end reads input data sets
+        --input1_2segs=input1_2segs
+        --input1_out=$input1_out
+        --input2_2segs=input2_2segs
+        --input2_out=$input2_out
+        --junction=$junction
+
+        ## Other parameters
+        --num_threads=$num_threads
+        --forward_reverse_both=$forward_reverse_both
+        --max_mismatch=$max_mismatch
+        --max_indel=$max_indel
+        --ignore_tail_length=$ignore_tail_length
+        --longest_gap_length=longest_gap_length
+        --shortest_segment_length=$shortest_segment_length
+        --output_read_and_quality=$output_read_and_quality
+        --output_format=$output_format
+        #if $output_format == "2":
+            --set_mapq=$set_mapq
+            #end if
+        --input_quality_type=$input_quality_type
+        ## For output junctions
+        --max_distance_bet_paired_ends=$max_distance_bet_paired_ends
+        --min_distance_bet_paired_ends=$min_distance_bet_paired_ends
+        --output_junction_info=$output_junction_info
+    </command>
     <requirements>
         <requirement type="package">bgisoap</requirement>
     </requirements>
-    <command interpreter="python">
-soapsplice.py
-
-## Configure reference genome
---ref_seq=$ref_seq
-
-## Reference index file - this does not have to be declared by
-## user as its an intermediate file created by 2bwt-builder
-## ref_seq_index=$ref_seq_index
-
-## Output
---alignment_out=$alignment_out
---unpaired_alignment_out=$unpaired_alignment_out
-
-## Check if doing single-end or paired-end mapping
---analysis_settings_type=$analysis_settings.analysis_type
-
-#if $analysis_settings.analysis_type == "single"
-    --forward_set=$analysis_settings.forward_set
-#else
-    ## Inputs
-    --forward_set=$analysis_settings.forward_set
-    --reverse_set=$analysis_settings.reverse_set
-    --min_insert_size=$analysis_settings.min_insert_size
-    --max_insert_size=$analysis_settings.max_insert_size
-#end if
-
-## Check if using default or custom parameters
---default_full_settings_type=$default_full_settings.settings_type
-
-#if $default_full_settings.settings_type == "full"
-    --filter=$filter
-    --read_id=$read_id
-    --report_repeats=$report_repeats
-    --long_insert_align=$long_insert_align
-    --high_error_rate=$high_error_rate
-    --allow_all_mismatches=$allow_all_mismatches
-    --match_mode=$match_mode
-    --num_threads=$num_threads
-#end if
-    </command>
     <inputs>
-        <param name="ref_seq"
-               type="data"
-               format="input"
-               label="Select a reference sequence">
-        </param>
-        <conditional name="analysis_settings">
-            <param name="analysis_type"
-                   type="select"
-                   label="What type of mapping do you want to perform?">
-                <option value="single">Single</option>
-                <option value="paired">Paired</option>
+        <conditional name="genomeSource">
+            <param name="refGenomeSource" type="select" label="Select a reference genome from your history or use a built-in index">
+                <option value="indexed">Use built-in index</option>
+                <option value="history">Use one from history</option>
             </param>
-            <when value="single">
-                <param name="forward_set"
-                       type="data"
-                       format="input"
-                       label="FASTA file">
+            <when value="indexed">
+                <param name="indices" type="select" label="Select a reference genome">
+                    <options from_data_table="2bwtbuilder_indexes">
+                        <!--<filter type="sort_by" column="2" />-->
+                        <validator type="no_options" message="No indexes are available" />
+                    </options>
                 </param>
             </when>
-            <when value="paired">
-                <param name="forward_set"
-                       type="data"
-                       format="input"
-                       label="Forward FASTA file">
-                </param>
-                <param name="reverse_set"
-                       type="data"
-                       format="input"
-                       label="Reverse FASTA file">
-                </param>
-                <param name="min_insert_size"
-                       type="integer"
-                       label="Minimal insert size for alignments"
-                       value="400">
-                </param>
-                <param name="max_insert_size"
-                       type="integer"
-                       label="Maximum insert size for alignments"
-                       value="600">
-                </param>
+            <when value="history">
+                <param name="ownFile" type="data" format="fasta" metadata_name="dbkey" label="Select a reference from history" />
             </when>
         </conditional>
-        <conditional name="default_full_settings">
-            <param name="settings_type"
-                   type="select"
-                   label="SOAP settings to use"
-                   help="Default settings is suitable for most mapping needs. If you want full control, use Full parameter list">
+        <conditional name="paired">
+            <param name="sPaired" type="select" label="Is your input data set mate-paired?" value="paired">
+                <option value="single">Single-end</option>
+                <option value="paired">Paired-end</option>
+            </param>
+            <when value="single">
+                <param name="input1" type="data" format="fastq" label="FASTQ file"/>
+            </when>
+            <when value="paired">
+                <param name="input1" type="data" format="fastq" label="Forward FASTQ file"/>
+                <param name="input2" type="data" format="fastq" label="Reverse FASTQ file"/>
+            </when>
+        </conditional>
+
+        <param name="insert_length" type="data" format="integer" label="Insert length of paired-end reads"/>
+
+        <conditional name="params">
+            <param name="source_select" type="select" label="SOAPsplice settings to use" help="For most mapping needs, please use Default settings. If you want full control then use Full Parameter List">
                 <option value="default">Default</option>
                 <option value="full">Full parameter list</option>
             </param>
-            <when value="default"/>
+            <when value="default" />
             <when value="full">
-                <param name="filter"
-                       type="integer"
-                       value="5"
-                       label="Filter low-quality reads containing >n Ns"/>
-                <param name="read_id"
-                       type="text"
-                       value="name"
-                       label="Read ID in output file"/>
-                <param name="report_repeats"
-                       type="select"
-                       value="0"
-                       label="Report repeat hits?">
-                    <option value="0">None</option>
-                    <option value="1">Random</option>
-                    <option value="2">All</option>
+                <param name="num_threads" type="integer" value="1" label="Number of threads" max="20"/>
+                <!-- Is this parameter to do with doing alignment on which reference chain? -->
+                <param name="forward_reverse_both" type="select" value="3" label="Forward, reverse, or both">
+                    <option value="1">Forward only</option>
+                    <option value="2">Reverse only</option>
+                    <option value="3">Both</option>
                 </param>
-                <!-- New for SOAP2 -->
-                <!-- Need to ask Ruibang for details of this parameter. Not clear from SOAP2 documentation. -->
-                <param name="long_insert_align"
-                       type="integer"
-                       value="0"/>
-                <param name="high_error_rate"
-                       type="integer"
-                       value="256"
-                       label="Configure no. of basepairs to align against due to high nos. of errors on a read"/>
-                <param name="allow_all_mismatches"
-                       type="integer"
-                       value="2"
-                       label="Allow all mismatches in a single read?"/>
-                <param name="match_mode"
-                       type="select"
-                       value="4">
-                    <option value="0">Exact match only</option>
-                    <option value="1">One mismatch only</option>
-                    <option value="2">Two mismatches only</option>
-                    <option value="3">Gap</option>
-                    <option value="4">Find best hits</option>
+                <param name="max_mismatch" type="integer" value="3" label="Maximum mismatch for one-segment alignment" max="5"/>
+                <param name="max_indel" type="integer" value="2" label="Maximum indel for one-segment alignment" max="2"/>
+                <param name="ignore_tail_length" type="integer" value="7" label="Length of tail that can be ignored in one-segment alignment"/>
+                <param name="longest_gap_length" type="integer" value="500000" label="Longest gap between two segments in two-segment alignment"/>
+                <param name="shortest_segment_length" type="integer" value="8" label="Shortest length of a segment in two-segment alignment"/>
+                <param name="output_read_and_quality" type="select" value="1" label="Output read and quality information?">
+                    <option value="1">Yes</option>
+                    <option value="2">No</option>
                 </param>
-                <param name="num_threads"
-                       type="integer"
-                       value="1"
-                       label="Multi-threads"/>
+                <conditional name="output_format">
+                    <param name="setting" type="select" label="Output format" value="0">
+                        <option value="0">Original</option>
+                        <option value="1">SOAP</option>
+                        <option value="2">SAM</option>
+                    </param>
+                    <when value="2">
+                        <param name="set_mapq" type="integer" label="Set mapping quality" value="255"/>
+                    </when>
+                </conditional>
+                <param name="input_quality_type" type="select" value="0" label="Input quality type in FASTQ file">
+                    <option value="0">quality = Phred + 64, used in Illumina/Solexa format</option>
+                    <option value="1">quality = Phred + 33, used in Sanger format</option>
+                </param>
+                <!-- For output junctions -->
+                <param name="max_distance_bet_paired_ends" type="integer" value="500000" label="Maximum distance between paired-end reads"/>
+                <param name="min_distance_bet_paired_ends" type="integer" value="50" label="Minimum distance between paired-end reads" max="5"/>
+                <param name="output_junction_info" type="select" value="1" label="Output read and quality information?">
+                    <option value="1">Output junction information</option>
+                    <option value="0">Don't output junction information</option>
+                </param>
             </when>
         </conditional>
     </inputs>
     <outputs>
-        <data name="alignment_out"
+        <data name="input1_2segs"
               type="data"
               format="output"
-              label="An alignment of paired reads on a reference sequence">
+              label="Two segment alignment result for forward set of reads">
         </data>
-        <data name="unpaired_alignment_out"
+        <data name="input1_out"
               type="data"
               format="output"
-              label="Unpaired alignment hits">
-            <filter>analysis_settings.analysis_type == "paired"</filter>
+              label="One segment alignment result for forward set of reads">
+        </data>
+        <data name="input2_2segs"
+              type="data"
+              format="output"
+              label="Two segment alignment result for reverse set of reads">
+        </data>
+        <data name="input2_out"
+              type="data"
+              format="output"
+              label="One segment alignment result for reverse set of reads">
+        </data>
+        <data name="junction"
+              type="data"
+              format="output"
+              label="Junction output dataset">
         </data>
     </outputs>
-  <tests>
-      <test>
-          <param name="forward_set"
-                 value="bgisoap/soap1/test_PE1.fa"
-                 ftype="fasta"/>
-          <param name="reverse_set"
-                 value="bgisoap/soap1/test_PE2.fa"
-                 ftype="fasta"/>
-          <param name="ref_seq"
-                 value="bgisoap/soap1/ref.fa"
-                 ftype="fasta"/>
-          <param name="min_insert_size"
-                 value="100"/>
-          <param name="max_insert_size"
-                 value="150"/>
-          <output name="alignment_out"
-                  file="bgisoap/soap1/out.sop"/>
-          <output name="unpaired_alignment_out"
-                  file="bgisoap/soap1/single.sop"/>
-      </test>
-  </tests>
-<help>
+    <tests>
+        <test>
+            <!--
+                soapsplice -d index/exampleGenome.fa.index -1 data/10X_50_1.fq -2 data/10X_50_2.fq -o out/example -I 2
+                `00 > data/10X_50.stdout 2> data/10X_50.stderr
+            -->
+            <param name="refGenomeSource" value="indexed" />
+            <param name="indices" value="phiX" />
+            <param name="sPaired" value="single" />
+            <param name="input1" value="bwa_wrapper_in1.fastqsanger" ftype="fastqsanger" />
+            <param name="source_select" value="pre_set" />
+            <param name="suppressHeader" value="true" />
+            <output name="output" file="bwa_wrapper_out1.sam" ftype="sam" sort="True" />
+        </test>
+    </tests>
+    <help>
 
-**What it does**
+        **What it does**
 
-SOAP2 (also known as SOAPaligner) is a member of the SOAP (Short Oligonucleotide Analysis Package). This second version of the SOAP tool for short oligonucleotide alignment features fast, accurate alignment for huge amounts of short reads generated by the Illumina/Solexa Genome Analyzer.
+        SOAPsplice is a tool for the genome-wide ab initio detection of splice junction sites from RNA-Seq data. The tool performs better than the previous tools by detecting similar number of true junctions with lower false positives as the best performing tool in all different situations with different read lengths and coverage. In particular, SOAPsplice performs better by predicting more true junctions with low false positive rate when the coverage is low, which is useful for detecting the junctions for those mRNAs with relatively lower expression level. For more information, please refer to the part of "Performance Evaluation" in this page. SOAPsplice is free for academic use only.
 
-Compared to version 1 of SOAP, SOAP2 is one order of magnitude faster so that, for example, it requires only 2 minutes to align one million single-end reads onto the human reference genome. Another improvement of SOAP2 is that it now supports a wide range of read lengths.
-
-SOAP2 made improvements in time and space efficiency by a re-implementing the basic data structures and algorithms used in SOAP1.The core algorithms and the indexing data structures (2way-BWT) were developed by T.W. Lam, Alan Tam, Simon Wong, Edward Wu and S.M. Yiu of the Algorithms Research group at the Department of Computer Science, the University of Hong Kong.
-
-</help>
+    </help>
 </tool>
+
+
