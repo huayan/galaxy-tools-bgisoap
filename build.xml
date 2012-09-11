@@ -1,4 +1,4 @@
-<project name="BGI-SOAP-Galaxy" default="copy" basedir=".">
+<project name="BGI-SOAP-Galaxy" default="symlink" basedir=".">
     <description>
         A build file for installing BGI SOAP into Galaxy
     </description>
@@ -12,6 +12,10 @@
     <property name="galaxy.build.dir" location="${build.dir}/${galaxy.src}"/>
     <property name="tooldep.build.dir" location="${build.dir}/tooldep"/>
     <property name="tooldep.dir" location="./tooldep"/>
+    <property name="tooldata.dir" location="./tool-data"/>
+    <property name="tooldata.build.dir" location="${galaxy.build.dir}/tool-data"/>
+    <property name="data.dir" location="./data"/>
+    <property name="data.build.dir" location="${build.dir}/data"/>
 
     <target name="init">
         <!-- Create the time stamp -->
@@ -26,11 +30,11 @@
         <echo message="Is hg present on path?: ${hg.present}"/>
     </target>
 
-    <target name="fail" depends="init" unless="hg.present">
+    <target name="fail_no_hg" depends="init" unless="hg.present">
         <fail message="Mercurial is not on available on the path. Please install Mercurial."/>
     </target>
 
-    <target name="download" depends="fail" unless="galaxysrc.found">
+    <target name="download" depends="fail_no_hg" unless="galaxysrc.found">
         <taskdef resource="net/sourceforge/ant4hg/taskdefs/antlib.xml"
                  classpath="${lib.dir}/ant4hg-V0.07.jar"/>
         <!-- Clone repository to the given directory -->
@@ -45,18 +49,22 @@
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${galaxy.build.dir}"/>
         <mkdir dir="${tooldep.build.dir}"/>
+        <mkdir dir="${data.build.dir}"/>
         <!-- Copy galaxy source into build directory -->
         <copy todir="${galaxy.build.dir}">
             <fileset dir="${galaxy.src}">
                     <exclude name="**/*universe_wsgi.ini.sample"/>
+                <exclude name="**/*tool_data_table_conf.xml.sample"/>
             </fileset>
         </copy>
         <!-- Copy bgisoap tooldep directory into build directory -->
         <copy todir="${tooldep.build.dir}">
             <fileset dir="${tooldep.dir}"/>
         </copy>
-        <!-- Create default symlink to 0.1 folder -->
-        <symlink link="${tooldep.build.dir}/bgisoap/default" resource="${tooldep.build.dir}/bgisoap/0.1"/>
+        <!-- Copy data directory into build directory -->
+        <copy todir="${data.build.dir}">
+            <fileset dir="${data.dir}"/>
+        </copy>
     </target>
 
     <target name="copy" depends="build">
@@ -91,15 +99,27 @@
         <replace file="${galaxy.build.dir}/universe_wsgi.ini.sample" propertyFile="./build.properties">
             <replacefilter token="@tooldep_path@" property="tooldep.location"/>
         </replace>
+
+        <!-- Copy tool_data_table_conf.xml.sample file into galaxy build -->
+        <copy file="${galaxy.dir}/tool_data_table_conf.xml.sample" todir="${galaxy.build.dir}"/>
+
+        <!-- Copy bgisoap.loc into galaxy build tool-data directory -->
+        <copy file="${tooldata.dir}/soapsplice.loc" todir="${tooldata.build.dir}"/>
+        <copy file="${tooldata.dir}/soapsplice2.loc" todir="${tooldata.build.dir}"/>
+    </target>
+
+    <target name="symlink" depends="copy">
+        <!-- Create default symlink to 0.1 folder -->
+        <symlink link="${tooldep.build.dir}/bgisoap/default" resource="${tooldep.build.dir}/bgisoap/0.1" overwrite="true"/>
     </target>
 
     <target name="clean" description="clean up">
-        <!-- Delete the ${build} directory trees -->
-        <delete dir="${build.dir}"/>
+        <!-- Delete the galaxy build directory -->
+        <delete dir="${galaxy.build.dir}"/>
     </target>
 
     <target name="purge" depends="clean" description="Removes build directory and galaxy source code">
-        <!-- Delete the galaxy src directory -->
+        <delete dir="${build.dir}"/>
         <delete dir="${galaxy.src}"/>
     </target>
 </project>
