@@ -103,9 +103,10 @@
         <!-- Copy tool_data_table_conf.xml.sample file into galaxy build -->
         <copy file="${galaxy.dir}/tool_data_table_conf.xml.sample" todir="${galaxy.build.dir}"/>
 
-        <!-- Copy bgisoap.loc into galaxy build tool-data directory -->
-        <copy file="${tooldata.dir}/soapsplice.loc" todir="${tooldata.build.dir}"/>
-        <copy file="${tooldata.dir}/soapsplice2.loc" todir="${tooldata.build.dir}"/>
+        <!-- Copy *.loc files into galaxy build tool-data directory -->
+        <copy todir="${tooldata.build.dir}">
+            <fileset dir="${tooldata.dir}"/>
+        </copy>
     </target>
 
     <target name="symlink" depends="copy">
