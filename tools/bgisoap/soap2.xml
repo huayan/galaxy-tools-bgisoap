@@ -1,18 +1,23 @@
-<tool id="soap2"
-      name="Map with SOAP 2"
-      version="0.1">
+<tool id="soap2a"
+      name="Map with SOAP 2a"
+      version="0.2">
     <requirements>
         <requirement type="package">bgisoap</requirement>
     </requirements>
     <command interpreter="python">
-soap2.py
+soap2a.py
 
-## Configure reference genome
---ref_seq=$ref_seq
-
-## Reference index file - this does not have to be declared by
-## user as its an intermediate file created by 2bwt-builder
-## ref_seq_index=$ref_seq_index
+## Reference source
+--fileSource=$genomeSource.refGenomeSource
+#if $genomeSource.refGenomeSource == "history":
+    ##build index on the fly
+    --ref="${genomeSource.ownFile}"
+    --dbkey=$dbkey
+#else:
+    ##use precomputed indexes
+    --ref="${genomeSource.indices.fields.path}"
+    --do_not_build_index
+    #end if
 
 ## Output
 --alignment_out=$alignment_out
@@ -46,11 +51,23 @@ soap2.py
 #end if
     </command>
     <inputs>
-        <param name="ref_seq"
-               type="data"
-               format="input"
-               label="Select a reference sequence">
-        </param>
+        <conditional name="genomeSource">
+            <param name="refGenomeSource" type="select" label="Select a reference genome from your history or use a built-in index">
+                <option value="indexed">Use built-in index</option>
+                <option value="history">Use one from history</option>
+            </param>
+            <when value="indexed">
+                <param name="indices" type="select" label="Select a reference genome">
+                    <options from_data_table="2bwtbuilder_indexes">
+                        <!--<filter type="sort_by" column="2" />-->
+                        <validator type="no_options" message="No indexes are available" />
+                    </options>
+                </param>
+            </when>
+            <when value="history">
+                <param name="ownFile" type="data" format="fasta" metadata_name="dbkey" label="Select a reference from history" />
+            </when>
+        </conditional>
         <conditional name="analysis_settings">
             <param name="analysis_type"
                    type="select"

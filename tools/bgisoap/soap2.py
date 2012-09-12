@@ -19,7 +19,11 @@ def __main__():
     #Parse command line
     parser = optparse.OptionParser()
     #Generic input params
-    parser.add_option("-d", "--ref_seq", dest="ref_seq", help="A reference genome in FASTA format")
+    parser.add_option('', '--fileSource', dest='fileSource', help='Source of reference dataset index')
+    parser.add_option('', '--ref', dest='ref', help='The reference genome to use or index' )
+    parser.add_option('', '--dbkey', dest='dbkey', help='Dbkey for reference genome' )
+    parser.add_option('', '--do_not_build_index', dest='do_not_build_index', action='store_true', help="Don't build index" )
+
     parser.add_option("", "--analysis_settings_type", dest="analysis_settings_type")
     parser.add_option("", "--default_full_settings_type", dest="default_full_settings_type")
     #Single-end params
@@ -47,19 +51,14 @@ def __main__():
     tmp_dir = tempfile.mkdtemp()
     print tmp_dir
 
-    #Create command call to generate index file from reference sequence
-    bwt_cmd = "2bwt-builder %s " % opts.ref_seq
-    print bwt_cmd
-
-    #Calculate name of reference index file
-    ref_opt = opts.ref_seq;
-    ref_index_filename = ref_opt + ".index"
+    #Get reference index directory
+    ref_file_name = opts.ref
 
     #Set up command line call
     if opts.analysis_settings_type == "single" and opts.default_full_settings_type == "default":
         soap_cmd = "soap2 -a %s -D " % ref_index_filename % " -o %s" % (opts.forward_set, opts.alignment_out)
     elif  opts.analysis_settings_type == "paired" and opts.default_full_settings_type == "default":
-        soap_cmd = "soap2 -a %s -b %s -D " %  (opts.forward_set, opts.reverse_set) + ref_index_filename + " -o %s -2 %s -m %s -x %s" % (opts.alignment_out, opts.unpaired_alignment_out, opts.min_insert_size, opts.max_insert_size)
+        soap_cmd = "soap2 -a %s -b %s -D " %  (opts.forward_set, opts.reverse_set) + ref_file_name + " -o %s -2 %s -m %s -x %s" % (opts.alignment_out, opts.unpaired_alignment_out, opts.min_insert_size, opts.max_insert_size)
     elif opts.analysis_settings_type == "single" and opts.default_full_settings_type == "full":
         soap_cmd = "soap2 -a %s -D " % ref_index_filename % " -o %s -n %s -t %s -r %s -v %s -M %s -p %s" % (opts.forward_set, opts.alignment_out, opts.filter, opts.read_id, opts.report_repeats, opts.allow_all_mismatches, opts.match_mode, opts.num_threads)
     elif opts.analysis_settings_type == "paired" and opts.default_full_settings_type == "full":
@@ -76,12 +75,6 @@ def __main__():
         tmp_stdout = open(tmp_out_file, 'wb')
         tmp_err_file = tempfile.NamedTemporaryFile().name
         tmp_stderr = open(tmp_err_file, 'wb')
-        #Create reference sequence index
-        print "Doing bwt2-builder call..."
-        bwt_proc = subprocess.Popen(args=bwt_cmd, shell=True, cwd=".", stdout=tmp_stdout, stderr=tmp_stderr)
-        returncode = bwt_proc.wait()
-
-        #Need to do some error checking on bwt2-builder output here
 
         #Perform SOAP2 call
         print "Doing SOAP2 call..."
