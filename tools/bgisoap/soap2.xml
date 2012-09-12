@@ -1,6 +1,4 @@
-<tool id="soap2a"
-      name="Map with SOAP 2a"
-      version="0.2">
+<tool id="soap2" name="Map with SOAP 2" version="0.2">
     <requirements>
         <requirement type="package">bgisoap</requirement>
     </requirements>
