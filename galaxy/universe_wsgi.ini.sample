@@ -135,7 +135,7 @@ paste.app_factory = galaxy.web.buildapp:app_factory
 
 # Default path to the directory containing the tools defined in tool_conf.xml.
 # Other tool config files must include the tool_path as an attribute in the <toolbox> tag.
-#tool_path = tools
+tool_path = tools
 
 # Path to the directory in which managed tool dependencies are placed.  To use
 # the dependency system, see the documentation at:
@@ -152,7 +152,7 @@ tool_dependency_dir = @tooldep_path@
 # Directory where data used by tools is located, see the samples in that
 # directory and the wiki for help:
 # http://wiki.g2.bx.psu.edu/Admin/Data%20Integration
-#tool_data_path = tool-data
+tool_data_path = tool-data
 
 # Directory where chrom len files are kept, currently mainly used by trackster
 #len_file_path = tool-data/shared/ucsc/chrom
@@ -324,7 +324,7 @@ static_robots_txt = %(here)s/static/robots.txt
 
 # Verbosity of console log messages.  Acceptable values can be found here:
 # http://docs.python.org/library/logging.html#logging-levels
-#log_level = DEBUG
+log_level = DEBUG
 
 # Print database operations to the server log (warning, quite verbose!).
 #database_engine_option_echo = False
