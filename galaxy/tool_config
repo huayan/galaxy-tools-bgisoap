@@ -5,6 +5,7 @@
   </section>
   <section name="NGS: Indel Analysis" id="bgi_indel_analysis">
     <tool file="bgisoap/soapsnp.xml"/>
+    <tool file="bgisoap/soappopindel.xml"/>
   </section>
   <section name="NGS: De Novo Assembly" id="bgi_de_novo_assembly">
     <tool file="bgisoap/soapdenovo.xml"/>
