@@ -21,37 +21,40 @@
             --input2=$paired.input2
             #end if
 
-        ## Prefix of output files which can a file directory
-        --output_dir_prefix=$output_dir_prefix
+        ## Prefix of output files which can contain a file directory
+        ##--output_dir_prefix=$output_dir_prefix
 
         ## Insert length
         --insert_length=$insert_length
 
         ## Output files for paired-end reads input data sets
-        --input1_2segs=input1_2segs
-        --input1_out=$input1_out
-        --input2_2segs=input2_2segs
-        --input2_out=$input2_out
+        --forward_2segs=$forward_2segs
+        --forward_out=$forward_out
+        --reverse_2segs=$reverse_2segs                                                                      1
+        --reverse_out=$reverse_out
         --junction=$junction
 
-        ## Other parameters
-        --num_threads=$num_threads
-        --forward_reverse_both=$forward_reverse_both
-        --max_mismatch=$max_mismatch
-        --max_indel=$max_indel
-        --ignore_tail_length=$ignore_tail_length
-        --longest_gap_length=longest_gap_length
-        --shortest_segment_length=$shortest_segment_length
-        --output_read_and_quality=$output_read_and_quality
-        --output_format=$output_format
-        #if $output_format == "2":
-            --set_mapq=$set_mapq
+        ## Check if using default or custom parameters
+        --default_full_settings_type=$default_full_settings.settings_type
+        #if $default_full_settings.settings_type == "full"
+            --num_threads=$num_threads
+            --forward_reverse_both=$forward_reverse_both
+            --max_mismatch=$max_mismatch
+            --max_indel=$max_indel
+            --ignore_tail_length=$ignore_tail_length
+            --longest_gap_length=longest_gap_length
+            --shortest_segment_length=$shortest_segment_length
+            --output_read_and_quality=$output_read_and_quality
+            --output_format=$output_format
+            #if $output_format == "2":
+                --set_mapq=$set_mapq
+                #end if
+            --input_quality_type=$input_quality_type
+            ## For output junctions
+            --max_distance_bet_paired_ends=$max_distance_bet_paired_ends
+            --min_distance_bet_paired_ends=$min_distance_bet_paired_ends
+            --output_junction_info=$output_junction_info
             #end if
-        --input_quality_type=$input_quality_type
-        ## For output junctions
-        --max_distance_bet_paired_ends=$max_distance_bet_paired_ends
-        --min_distance_bet_paired_ends=$min_distance_bet_paired_ends
-        --output_junction_info=$output_junction_info
     </command>
     <requirements>
         <requirement type="package">bgisoap</requirement>
@@ -88,10 +91,10 @@
             </when>
         </conditional>
 
-        <param name="insert_length" type="data" format="integer" label="Insert length of paired-end reads"/>
+        <param name="insert_length" type="integer" label="Insert length of paired-end reads" value="200"/>
 
-        <conditional name="params">
-            <param name="source_select" type="select" label="SOAPsplice settings to use" help="For most mapping needs, please use Default settings. If you want full control then use Full Parameter List">
+        <conditional name="default_full_settings">
+            <param name="settings_type" type="select" label="SOAPsplice settings to use" help="For most mapping needs, please use Default settings. If you want full control then use Full Parameter List">
                 <option value="default">Default</option>
                 <option value="full">Full parameter list</option>
             </param>
@@ -138,31 +141,11 @@
         </conditional>
     </inputs>
     <outputs>
-        <data name="input1_2segs"
-              type="data"
-              format="output"
-              label="Two segment alignment result for forward set of reads">
-        </data>
-        <data name="input1_out"
-              type="data"
-              format="output"
-              label="One segment alignment result for forward set of reads">
-        </data>
-        <data name="input2_2segs"
-              type="data"
-              format="output"
-              label="Two segment alignment result for reverse set of reads">
-        </data>
-        <data name="input2_out"
-              type="data"
-              format="output"
-              label="One segment alignment result for reverse set of reads">
-        </data>
-        <data name="junction"
-              type="data"
-              format="output"
-              label="Junction output dataset">
-        </data>
+        <data name="forward_2segs" format="Tabular" label="Two segment alignment for forward set of reads"/>
+        <data name="forward_out" format="Tabular" label="One segment alignment for forward set of reads"/>
+        <data name="reverse_2segs" format="Tabular" label="Two segment alignment for reverse set of reads"/>
+        <data name="reverse_out" format="Tabular" label="One segment alignment for reverse set of reads"/>
+        <data name="junction" format="Tabular" label="Junction output"/>
     </outputs>
     <tests>
         <test>
@@ -181,9 +164,99 @@
     </tests>
     <help>
 
-        **What it does**
+**What it does**
 
-        SOAPsplice is a tool for the genome-wide ab initio detection of splice junction sites from RNA-Seq data. The tool performs better than the previous tools by detecting similar number of true junctions with lower false positives as the best performing tool in all different situations with different read lengths and coverage. In particular, SOAPsplice performs better by predicting more true junctions with low false positive rate when the coverage is low, which is useful for detecting the junctions for those mRNAs with relatively lower expression level. For more information, please refer to the part of "Performance Evaluation" in this page. SOAPsplice is free for academic use only.
+SOAPsplice is a tool for the genome-wide ab initio detection of splice junction sites from RNA-Seq data. The tool performs better than the previous tools by detecting similar number of true junctions with lower false positives as the best performing tool in all different situations with different read lengths and coverage. In particular, SOAPsplice performs better by predicting more true junctions with low false positive rate when the coverage is low, which is useful for detecting the junctions for those mRNAs with relatively lower expression level. For more information, please refer to the part of "Performance Evaluation" in this page. SOAPsplice is free for academic use only.
+
+-----
+
+**How it works**
+
+To use SOAPsplice, short reads are searched against index files for a given reference genome are required. A selection of index files are available from the above drop down menu which have been built for use with BGI SOAP tools using the 2bwt-builder tool.
+
+-----
+
+**Outputs**
+
+Three types of output files are generated by SOAPsplice:
+
+1. One-segment alignment files which end in .out
+2. Two-segment alignment files which end in .2Segs
+3. A single junction file that ends in .junc
+
+The one-segment alignment output file has the following columns::
+
+            Column  Description
+        ----------  --------------------------------------------------------
+             index  Number i means it is ith read
+                id  The id of the read
+               seq  Sequence of mapped bases. The read will be converted to
+                    the reverse complement of the sequence if mapped on the
+                    reverse chain of reference
+              qual  Quality of sequence. Corresponding to sequence, to be
+                    consistent with seq, it will be converted too if mapped
+                    on reverse chain
+          num hits  Number of equal best hits. The reads with no hits will
+                    be ignored
+            length  Length of mapped bases
+               +/-  Alignment on the direct (+) or reverse (-) chain of the
+                    reference
+               chr  Id of reference sequence
+          location  Location of first bp on the reference, counted from 1
+                    types  Type of hits:
+                    0: exact match.
+                    1~3 RefAllele->OffsetQueryAlleleQual: number of
+                    mismatches, followed by detailed mutation sites and switch
+                    of allele types. Offset is relative to the initial
+                    location on reference. 'OffsetAlleleQual': offset, allele,
+                    and quality. "1INDEL", "2INDEL": alignment with 1 or 2 indels.
+                    Example: "2 A->10T30 C->13A32" means there are two mismatches,
+                    one on location+10 of the reference, and the other on
+                    location+13 of reference. The alleles on reference are A and C
+                    respectively, while query alleles and their quality are T, 30
+                    and A, 32.
+
+Two-segment alignment files end with a .2Segs suffix and contain the following columns::
+
+            Column  Description
+        ----------  --------------------------------------------------------
+             index  Number i means it's ith read
+                id  The id of the read;
+     hitOne,hitTwo  Number of equal best hits for both segments
+     lengthOne,etc  The length for both segments
+               +/-  Alignment on the direct (+) or reverse (-) chain of the reference
+         direction  The chain that the junction reported by this read is on, "fwd" means it's on the direct chain, while "rev" means it's on the reverse chain;
+        chrOne,etc  Id of reference sequence that both segments align to
+   locationOne,etc  Location of first bp on the reference for both segments, counted from 1
+       mismatchOne  The number of mismatches for both segments, at most 1 for each segment
+      mismatchInfo  The same as last column in one-segment alignment file.
+
+ Junction files with a .junc suffix contain the following columns::
+
+            Column  Description
+        ----------  --------------------------------------------------------
+               chr  Id of reference sequence that the junction comes from
+             site1  Left site of the junction site, one previous the left bound of the intron
+             site2  Right site of the junction site, one after the right round of the intron
+         direction  The chain that the intron is on, "fwd" means it's on the direct chain, while "rev" means it's on the reverse chain.
+            number  Number of reads supporting this junction.
+
+-----
+
+**Publication**
+
+Huang S, Zhang J, Li R, Zhang W, He Z, Lam T-W, Peng Z and Yiu S-M (2011) SOAPsplice: genome-wide ab initio detection of splice junctions from RNA-Seq data. Front. Gene. 2:46. doi: 10.3389/fgene.2011.00046
+
+-----
+
+
+**References**
+
+1. Li, H., J. Ruan, et al. (2008). "Mapping short DNA sequencing reads and calling variants using mapping quality scores." Genome Res 18(11): 1851-8.
+2. Wang, E. T., R. Sandberg, et al. (2008). "Alternative isoform regulation in human tissue transcriptomes." Nature 456(7221): 470-6.
+3. Trapnell, C., L. Pachter, et al. (2009). "TopHat: discovering splice junctions with RNA-Seq." Bioinformatics 25(9): 1105-11.
+4. Au, Kin Fai, Jiang, Hui, Lin, Lan, Xing, Yi, Wong, Wing Hung (2010). "Detection of splice junctions from paired-end RNA-seq data by SpliceMap." Nucleic Acids Research 38(14), 4570-4578.
+5. Wang, Kai et al. (2010). "MapSplice: accurate mapping of RNA-seq reads for splice junction discovery." Nucleic Acids Research 38(18), e178, doi:10.1093/nar/gkq622.
 
     </help>
 </tool>
