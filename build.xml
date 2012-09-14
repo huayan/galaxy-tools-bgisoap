@@ -17,7 +17,23 @@
     <property name="data.dir" location="./data"/>
     <property name="data.build.dir" location="${build.dir}/data"/>
 
-    <target name="init">
+     <target name="check">
+        <echo message="${os.name}"/>
+    </target>
+
+    <target name="checkos">
+        <condition property="isWindows" value="true">
+            <os family="windows" />
+        </condition>
+        <condition property="isLinux" value="true">
+            <os family="unix" />
+        </condition>
+        <condition property="isMac" value="true">
+            <os family="mac" />
+        </condition>
+    </target>
+
+    <target name="init" depends="checkos">
         <!-- Create the time stamp -->
         <tstamp/>
         <!-- Check if galaxy-central code has been downloaded -->
@@ -94,12 +110,6 @@
         <chmod file="${galaxy.build.dir}/galaxy.sh" perm="ugo+x"/>
         <chmod file="${galaxy.build.dir}/run.sh" perm="ugo+x"/>
 
-        <!-- Copy universe_wsgi.ini.sample file into galaxy build -->
-        <copy file="${galaxy.dir}/universe_wsgi.ini.sample" todir="${galaxy.build.dir}"/>
-        <replace file="${galaxy.build.dir}/universe_wsgi.ini.sample" propertyFile="./build.properties">
-            <replacefilter token="@tooldep_path@" property="tooldep.location"/>
-        </replace>
-
         <!-- Copy tool_data_table_conf.xml.sample file into galaxy build -->
         <copy file="${galaxy.dir}/tool_data_table_conf.xml.sample" todir="${galaxy.build.dir}"/>
 
@@ -109,7 +119,23 @@
         </copy>
     </target>
 
-    <target name="symlink" depends="copy">
+    <target name="if_macosx" depends="copy" if="isMac">
+        <!-- Copy universe_wsgi.ini.sample file into galaxy build -->
+        <copy file="${galaxy.dir}/universe_wsgi.ini.sample" todir="${galaxy.build.dir}"/>
+        <replace file="${galaxy.build.dir}/universe_wsgi.ini.sample" propertyFile="./build.properties">
+            <replacefilter token="@tooldep_path@" property="tooldep.location.mac"/>
+        </replace>
+    </target>
+
+    <target name="if_unix" depends="if_macosx" unless="isMac">
+        <!-- Copy universe_wsgi.ini.sample file into galaxy build -->
+        <copy file="${galaxy.dir}/universe_wsgi.ini.sample" todir="${galaxy.build.dir}"/>
+        <replace file="${galaxy.build.dir}/universe_wsgi.ini.sample" propertyFile="./build.properties">
+            <replacefilter token="@tooldep_path@" property="tooldep.location.linux"/>
+        </replace>
+    </target>
+
+    <target name="symlink" depends="if_unix">
         <!-- Create default symlink to 0.1 folder -->
         <symlink link="${tooldep.build.dir}/bgisoap/default" resource="${tooldep.build.dir}/bgisoap/0.1" overwrite="true"/>
     </target>
