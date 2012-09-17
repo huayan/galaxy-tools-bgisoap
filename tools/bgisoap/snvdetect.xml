@@ -1,0 +1,90 @@
+<tool id="snvdetect" name="SNVdetect" version="0.1">
+    <description>- detect single nucleotide variants from data set pairs</description>
+    <requirements>
+        <requirement type="package">bgisoap</requirement>
+    </requirements>
+    <command interpreter="python">
+        snvdetect.py
+
+        ## Inputs
+        --chr_length=$chr_length
+        --input1_alleleqc=$input1_alleleqc
+        --input2_alleleqc=$input2_alleleqc
+        --snvtest=$snvtest
+
+        ## Check if using default or custom parameters
+        --default_full_settings_type=$default_full_settings.settings_type
+        #if $default_full_settings.settings_type == "full"
+        --min_depth=$min_depth
+        --max_depth=$max_depth
+        --max_copy_num=$max_copy_num
+        --pvalue_rank_sum=$pvalue_rank_sum
+        --pvalue_mismatch_enrichment_repetitive_hits=$pvalue_mismatch_enrichment_repetitive_hits
+        --pvalue_mismatch_enrichment_read_ends=$pvalue_mismatch_enrichment_read_ends
+        --relax_depth_requirement=$relax_depth_requirement
+        --min_allele_freq=$min_allele_freq
+        --allele_freq_requirement=$allele_freq_requirement
+        --max_allele_freq=$max_allele_freq
+        --pvalue_somatic_mut_detection=$pvalue_somatic_mut_detection
+        #end if
+
+        ## Output file
+        --output=$output
+
+    </command>
+    <inputs>
+        <param name="chr_length" type="data" format="input" label="Chromosome length info file"/>
+        <param name="input1_alleleqc" type="data" format="input" label="First alleleQC file"/>
+        <param name="input2_alleleqc" type="data" format="input" label="Second alleleQC file"/>
+        <param name="snvtest" type="data" format="input" label="SNVtest file"/>
+        <conditional name="default_full_settings">
+            <param name="settings_type"
+                   type="select"
+                   label="SNVdetect settings to use"
+                   help="Default settings are suitable for most analyses. If you want full control, use Full parameter list">
+                <option value="default">Default</option>
+                <option value="full">Full parameter list</option>
+            </param>
+            <when value="default"/>
+            <when value="full">
+                <param name="min_depth" type="integer" label="Minimum depth requirement" value="10"/>
+                <param name="max_depth" type="integer" label="Maximum depth requirement"  value="1000"/>
+                <param name="max_copy_num" type="float" label="Maximum copy number" value="1.5"/>
+                <param name="pvalue_mismatch_enrichment_repetitive_hits" type="float" label="p-value cutoff for mismatch enrichment test on repetitive hits" value="0.01"/>
+                <param name="pvalue_rank_sum" type="float" label="p-value cutoff for quality rank sum test" value="0.01"/>
+                <param name="pvalue_mismatch_enrichment_read_ends" type="float" label="p-value cutoff for mismatch enrichment test on 5' or 3' end of reads" value="0.01"/>
+                <param name="relax_depth_requirement" type="select" label="Relax the depth requirement" help="If this parameter was not given, sites which unique aligned reads less than minimum depth requirement would be filtered" value="off">
+                    <option value="off">Off</option>
+                    <option value="on">On</option>
+                </param>
+                <param name="min_allele_freq" type="integer" label="Minimum allele frequency requirement" value="10"/>
+                <param name="allele_freq_requirement" type="integer" label="Allele frequency requirement for confident genotype call" value="20"/>
+                <param name="max_allele_freq" type="integer" label="Maximum allowed mutant allele frequency in normal for somatic mutation detection" value="2"/>
+                <param name="pvalue_somatic_mut_detection" type="float" label="p-value cutoff for somatic mutation detection" value="0.01"/>
+            </when>
+        </conditional>
+    </inputs>
+    <outputs>
+        <data name="output" type="data" label="gz zipped results file"/>
+    </outputs>
+    <tests>
+        <test>
+            <!--
+                soapPopIndel -i all.txt -v all.vcf -p 2
+            -->
+            <param name="depth" value="indexed"/>
+            <param name="ploidy" value="2"/>
+            <output name="output" file="bwa_wrapper_out1.sam" ftype="sam" sort="True"/>
+        </test>
+    </tests>
+    <help>
+
+**What it does**
+
+alleleQC detects single nucleotide variants from pairs of data sets. The results of this tool is the final result of the
+SOAPsnv process to detect single nucleotide variants.
+
+    </help>
+</tool>
+
+
