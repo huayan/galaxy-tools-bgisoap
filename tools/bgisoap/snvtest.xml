@@ -1,0 +1,67 @@
+<tool id="snvtest" name="SNVtest" version="0.1">
+    <description>- identifies changes in allele frequency between alignment mappings</description>
+    <requirements>
+        <requirement type="package">bgisoap</requirement>
+    </requirements>
+    <command interpreter="python">
+        snvtest.py
+
+        ## Inputs
+        --input1=$input1
+        --input2=$input2
+
+        ## Check if using default or custom parameters
+        --default_full_settings_type=$default_full_settings.settings_type
+        #if $default_full_settings.settings_type == "full"
+        --max_depth=$max_depth
+        --pvalue=$pvalue
+        --cutoff=$cutoff
+        #end if
+
+        ## Output file
+        --output=$output
+
+    </command>
+    <inputs>
+        <param name="input1" type="data" format="input" label="First input pileup file"/>
+        <param name="input2" type="data" format="input" label="Second input pileup file"/>
+        <conditional name="default_full_settings">
+            <param name="settings_type"
+                   type="select"
+                   label="SNVtest settings to use"
+                   help="Default settings are suitable for most analyses. If you want full control, use Full parameter list">
+                <option value="default">Default</option>
+                <option value="full">Full parameter list</option>
+            </param>
+            <when value="default"/>
+            <when value="full">
+                <param name="max_depth" type="integer" label="Maximum depth requirement. Sites with higher depth would be filtered" value="1000"/>
+                <param name="pvalue" type="float" label="p-value" value="0.01"/>
+                <param name="cutoff" type="integer" label="Quality cutoff for bases" value="20"/>
+            </when>
+        </conditional>
+    </inputs>
+    <outputs>
+        <data name="output" type="data" label="gz zipped results file"/>
+    </outputs>
+    <tests>
+        <test>
+            <!--
+                soapPopIndel -i all.txt -v all.vcf -p 2
+            -->
+            <param name="depth" value="indexed"/>
+            <param name="ploidy" value="2"/>
+            <output name="output" file="bwa_wrapper_out1.sam" ftype="sam" sort="True"/>
+        </test>
+    </tests>
+    <help>
+
+**What it does**
+
+SNVtest uses Fisher's Exact Test to detect sites with significantly allele frequency change between normal and tumour
+tissues. The results of this tool is used by the SOAPsnv process to detect single nucleotide variants.
+
+    </help>
+</tool>
+
+

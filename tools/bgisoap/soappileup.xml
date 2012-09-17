@@ -1,0 +1,88 @@
+<tool id="soappileup" name="SOAPpileup" version="0.1">
+    <description>- analyse allele frequency</description>
+    <requirements>
+        <requirement type="package">bgisoap</requirement>
+    </requirements>
+    <command interpreter="python">
+        soappileup.py
+
+        ## Inputs
+        --ref=$ref
+        --sorted_soap=$sorted_soap
+        --regions=$regions
+
+        ## Check if using default or custom parameters
+        --default_full_settings_type=$default_full_settings.settings_type
+
+        #if $default_full_settings.settings_type == "full"
+        --discard_uncovered_loci=$discard_uncovered_loci
+        --regions_sorted=$regions_sorted
+        --read_edge_length=$read_edge_length
+        --region_limited=$region_limited
+        #end if
+
+        ## Output file
+        --output=$output
+
+    </command>
+
+    <inputs>
+        <param name="ref" type="data" label="Reference sequence file" format="Fasta" help="Reference should be in Fasta format and compressed into a .gz file"/>
+        <param name="sorted_soap" type="data" label="A sorted SOAP file" help="This file can be generated using SOAP1 or SOAP2, and compressed into a .gz file"/>
+        <param name="regions" type="data" label="Regions to undergo pileup process"/>
+        <conditional name="default_full_settings">
+            <param name="settings_type"
+                   type="select"
+                   label="SOAPpileup settings to use"
+                   help="Default settings are suitable for most analyses. If you want full control, use Full parameter list">
+                <option value="default">Default</option>
+                <option value="full">Full parameter list</option>
+            </param>
+            <when value="default"/>
+            <when value="full">
+                <param name="discard_uncovered_loci" type="select" label="Discard uncovered loci?" value="off">
+                    <option value="on">Yes</option>
+                    <option value="off">No</option>
+                </param>
+                <param name="regions_sorted" type="select"
+                       label="Are regions already sorted and combined (not overlapped with others)?" value="off">
+                    <option value="on">Yes</option>
+                    <option value="off">No</option>
+                </param>
+                <param name="read_edge_length"
+                       type="integer"
+                       value="10"
+                       label="Number of base pairs at the 5' and 3' ends to be defined as the read edge"/>
+                <param name="region_limited"
+                       type="integer"
+                       value="1000000"
+                       label="Region limited (region will be split into smaller ones)"/>
+            </when>
+        </conditional>
+    </inputs>
+    <outputs>
+        <data name="output" type="data" label="Zipped results file"/>
+    </outputs>
+    <tests>
+        <test>
+            <!--
+                soapPopIndel -i all.txt -v all.vcf -p 2
+            -->
+            <param name="depth" value="indexed"/>
+            <param name="ploidy" value="2"/>
+            <output name="output" file="bwa_wrapper_out1.sam" ftype="sam" sort="True"/>
+        </test>
+    </tests>
+    <help>
+
+**What it does**
+
+SOAPpileup is a tool for summarizing the base calls of aligned reads to a reference sequence. This tool performs a step
+required for SOAPsnv in the detection somatic mutation of single nucleotide variant (SNV) by re-sequencing. Together
+SOAPpileup, there are three other tools required in the SOAPsnv process: SNVtest, alleleQC and SNVdetect. Further
+information is available in their Galaxy tool pages.
+
+    </help>
+</tool>
+
+
