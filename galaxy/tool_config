@@ -9,7 +9,6 @@
   </section>
   <section name="NGS: De Novo Assembly" id="bgi_de_novo_assembly">
     <tool file="bgisoap/soapdenovo.xml"/>
-    <tool file="bgisoap/soapdenovo_config.xml"/>
     <tool file="bgisoap/soapdenovotrans.xml"/>
   </section>
   <section name="NGS: Splice Detection" id="bgi_splice_detection">
