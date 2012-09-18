@@ -14,3 +14,9 @@
   <section name="NGS: Splice Detection" id="bgi_splice_detection">
       <tool file="bgisoap/soapsplice.xml"/>
   </section>
+  <section name="NGS: Somatic Mutation Detection" id="bgi_somatic_mut_detection">
+        <tool file="bgisoap/soappileup.xml"/>
+        <tool file="bgisoap/snvtest.xml"/>
+        <tool file="bgisoap/alleleqc.xml"/>
+        <tool file="bgisoap/snvdetect.xml"/>
+    </section>
