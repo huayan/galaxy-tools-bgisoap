@@ -3,7 +3,7 @@
         <requirement type="package">bgisoap</requirement>
     </requirements>
     <command interpreter="python">
-soap2a.py
+soap2.py
 
 ## Reference source
 --fileSource=$genomeSource.refGenomeSource
