@@ -1,4 +1,4 @@
-  <label id="bgi" text="BGI SOAP Package"/>
+  <label id="bgi" text="BGI SOAP Package Beta"/>
   <section name="NGS: Mapping" id="bgi_ngs_mapping">
     <tool file="bgisoap/soap1.xml"/>
     <tool file="bgisoap/soap2.xml"/>
@@ -8,8 +8,12 @@
     <tool file="bgisoap/soappopindel.xml"/>
   </section>
   <section name="NGS: De Novo Assembly" id="bgi_de_novo_assembly">
+  <label id="soapdenovo" text="De novo assembly tools"/>
     <tool file="bgisoap/soapdenovo.xml"/>
+    <tool file="bgisoap/soapdenovo2.xml"/>
     <tool file="bgisoap/soapdenovotrans.xml"/>
+    <label id="soapdenovo2_mods" text="SOAPdenovo2 modules"/>
+    <tool file="bgisoap/soapdenovo2_pregraph.xml"/>
   </section>
   <section name="NGS: Splice Detection" id="bgi_splice_detection">
       <tool file="bgisoap/soapsplice.xml"/>
@@ -19,4 +23,4 @@
         <tool file="bgisoap/snvtest.xml"/>
         <tool file="bgisoap/alleleqc.xml"/>
         <tool file="bgisoap/snvdetect.xml"/>
-    </section>
+  </section>
