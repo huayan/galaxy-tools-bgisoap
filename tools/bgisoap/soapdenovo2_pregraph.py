@@ -17,8 +17,10 @@ def cleanup_before_exit(tmp_dir):
 def main():
     #Parse command line
     parser = optparse.OptionParser()
-    parser.add_option("", "--max_read_length", dest="max_read_length", help="Maximum read length")
+    parser.add_option('', '--file_source', dest='file_source', help='Source of config file')
+    parser.add_option("", "--config", dest="config", help="Configuration file")
 
+    parser.add_option("", "--max_read_length", dest="max_read_length", help="Maximum read length")
     #Make list of params
     parser.add_option("", "--avg_ins", action="append", type="string", dest="avg_insert_list", help="Average insert size")
     parser.add_option("", "--reverse_seq", action="append", type="string", dest="reverse_seq_list", help="Reverse sequence?")
@@ -29,7 +31,7 @@ def main():
     parser.add_option("", "--pair_num_cutoff", action="append", type="string", dest="pair_num_cutoff_list",
         help="Pair number cutoff for a reliable connection")
     parser.add_option("", "--map_len", action="append", type="string", dest="map_len_list",
-        help="Length of contig that has to be aligned for a reliable read location")
+        help="Length of contig to be aligned for a reliable read location")
 
     #Data inputs
     parser.add_option("", "--type_of_data", action="append", type="string", dest="type_of_data_list")
@@ -53,10 +55,10 @@ def main():
     parser.add_option("-p", "--ncpu", dest="ncpu", help="Number of cpu for use")
     parser.add_option("-a", "--init_mem_assumption", dest="init_mem_assumption", help="<emory assumption initialized to avoid further reallocation, unit G")
     parser.add_option("-d", "--kmer_freq_cutoff", dest="kmer_freq_cutoff", help="kmers with frequency no larger than KmerFreqCutoff will be deleted")
-    parser.add_option("-R", "--output_extra_info", dest="output_extra_info", help="Output extra information for " \
-                                                                                  "resolving repeats in contig step")
+    parser.add_option("-R", "--output_extra_info", dest="output_extra_info", help="Output extra information for resolving repeats in contig step")
 
     #Outputs
+    parser.add_option("", "--pregraph_basic", dest='pregraph_basic', help="pregraph_basic data")
     parser.add_option("", "--soap_config", dest='soap_config', help="Contig sequence file")
 
     #Parameters needed to output files in directory
@@ -65,61 +67,70 @@ def main():
 
     opts, args = parser.parse_args()
 
+    #Check
+    print opts.file_source
+
     #Sort out global parameters
     database_tmp_dir = opts.__new_file_path__ #Where files will be written
     print "Temp dir: ", database_tmp_dir
     output_id = opts.soap_config_id
     print "Output ID: ", output_id
 
-    #Create temp file to store soapdenovo2 running configuration
-    config_file = tempfile.NamedTemporaryFile(dir=database_tmp_dir).name
-    try:
-        fout = open(config_file,'wb')
-        fout.write("max_rd_len=%s\n" % opts.max_read_length)
-        #Calculate how many sets of data there are - use avg_ins as a measure of this
-        #Separate indices required to keep count of reads
-        single_read_index = 0
-        paired_read_index = 0
-        for index in range(len(opts.avg_insert_list)):
-            fout.write("[LIB]\n")
-            fout.write("avg_ins=%s\n" % (opts.avg_insert_list)[index])
-            fout.write("reverse_seq=%s\n" % opts.reverse_seq_list[index])
-            fout.write("asm_flags=%s\n" % opts.asm_flags_list[index])
-            fout.write("rd_len_cutoff=%s\n" % opts.rd_len_cutoff_list[index])
-            fout.write("rank=%s\n" % opts.rank_list[index])
-            fout.write("pair_num_cutoff=%s\n" % opts.pair_num_cutoff_list[index])
-            fout.write("map_len=%s\n" % opts.map_len_list[index])
-            #Add data file configuration - needs careful looping due to single and paired reads
-            print opts.type_of_data_list[index]
-            print opts.format_of_data_list[index]
-            if opts.type_of_data_list[index] == "single":  #then only one read
-                if (opts.format_of_data_list)[index] == "fastq":
-                    fout.write("q=%s\n" % (opts.single_fastq_input1_list)[single_read_index])
-                elif opts.format_of_data == "fasta":
-                    fout.write("f=%s\n" % opts.single_fasta_input1_list[single_read_index])
-                else:
-                    fout.write("b=%s\n" % opts.single_bam_input1_list[single_read_index])
-                single_read_index = single_read_index + 1
-            elif opts.type_of_data_list[index] == "paired":
-                if opts.format_of_data_list[index] == "fastq":
-                    fout.write("q1=%s\n" % (opts.paired_fastq_input1_list)[paired_read_index])
-                    fout.write("q2=%s\n" % (opts.paired_fastq_input2_list)[paired_read_index])
-                elif opts.format_of_data_list[index] == "fasta":
-                    fout.write("f1=%s\n" % opts.paired_fasta_input1_list[paired_read_index])
-                    fout.write("f2=%s\n" % opts.paired_fasta_input2_list[paired_read_index])
-                else:
-                    fout.write("b1=%s\n" % opts.paired_fasta_input1_list[paired_read_index])
-                    fout.write("b2=%s\n" % opts.paired_fasta_input2_list[paired_read_index])
-                paired_read_index = paired_read_index + 1
-        fout.close()
-    except Exception, e:
-        stop_err("File cannot be opened for writing soap.config" + str(e))
+    if opts.file_source == "history":
+        config_file = opts.config
+    else:
+        #Create temp file to store soapdenovo2 running configuration
+        config_file = tempfile.NamedTemporaryFile(dir=database_tmp_dir, prefix="soap_" + output_id,
+            suffix="config").name
+
+
+        try:
+            fout = open(config_file,'wb')
+            fout.write("max_rd_len=%s\n" % opts.max_read_length)
+            #Calculate how many sets of data there are - use avg_ins as a measure of this
+            #Separate indices required to keep count of reads
+            single_read_index = 0
+            paired_read_index = 0
+            for index in range(len(opts.avg_insert_list)):
+                fout.write("[LIB]\n")
+                fout.write("avg_ins=%s\n" % (opts.avg_insert_list)[index])
+                fout.write("reverse_seq=%s\n" % opts.reverse_seq_list[index])
+                fout.write("asm_flags=%s\n" % opts.asm_flags_list[index])
+                fout.write("rd_len_cutoff=%s\n" % opts.rd_len_cutoff_list[index])
+                fout.write("rank=%s\n" % opts.rank_list[index])
+                fout.write("pair_num_cutoff=%s\n" % opts.pair_num_cutoff_list[index])
+                fout.write("map_len=%s\n" % opts.map_len_list[index])
+                #Add data file configuration - needs careful looping due to single and paired reads
+                print opts.type_of_data_list[index]
+                print opts.format_of_data_list[index]
+                if opts.type_of_data_list[index] == "single":  #then only one read
+                    if (opts.format_of_data_list)[index] == "fastq":
+                        fout.write("q=%s\n" % (opts.single_fastq_input1_list)[single_read_index])
+                    elif opts.format_of_data == "fasta":
+                        fout.write("f=%s\n" % opts.single_fasta_input1_list[single_read_index])
+                    else:
+                        fout.write("b=%s\n" % opts.single_bam_input1_list[single_read_index])
+                    single_read_index = single_read_index + 1
+                elif opts.type_of_data_list[index] == "paired":
+                    if opts.format_of_data_list[index] == "fastq":
+                        fout.write("q1=%s\n" % (opts.paired_fastq_input1_list)[paired_read_index])
+                        fout.write("q2=%s\n" % (opts.paired_fastq_input2_list)[paired_read_index])
+                    elif opts.format_of_data_list[index] == "fasta":
+                        fout.write("f1=%s\n" % opts.paired_fasta_input1_list[paired_read_index])
+                        fout.write("f2=%s\n" % opts.paired_fasta_input2_list[paired_read_index])
+                    else:
+                        fout.write("b1=%s\n" % opts.paired_fasta_input1_list[paired_read_index])
+                        fout.write("b2=%s\n" % opts.paired_fasta_input2_list[paired_read_index])
+                    paired_read_index = paired_read_index + 1
+            fout.close()
+        except Exception, e:
+            stop_err("File cannot be opened for writing soap.config" + str(e))
 
     #Set up command line call
     #TODO - remove hard coded path
     #Code for adding directory path to other file required as output
-    cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer pregraph -s %s -K 63 -o %s" % (config_file, database_tmp_dir + "/out")
-
+    cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer pregraph -s %s -K 63 -o %s" % (config_file,
+                                                                                              database_tmp_dir + "/out")
     print cmd
 
     #Perform SOAPdenovo2_pregraph analysis
@@ -155,12 +166,14 @@ def main():
     except Exception, e:
         raise Exception, 'Problem performing pregraph process ' + str(e)
 
-    #Read soap config file into output
+    #Read soap config file into its output
     config_out = open(opts.soap_config, 'wb')
     file = open(config_file)
+#    file = open(fout)
     for line in file:
         config_out.write(line)
     config_out.close()
+    file.close()
 
     #Sort out filenames
     for filename in sorted(os.listdir(database_tmp_dir)):
