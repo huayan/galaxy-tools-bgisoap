@@ -1,0 +1,111 @@
+<tool id="soapdenovo2_map" name="map" version="0.1" force_history_refresh="True">
+    <description>- from SOAPdenovo2</description>
+    <requirements>
+        <requirement type="package">bgisoap</requirement>
+    </requirements>
+    <command interpreter="python">
+        soapdenovo2_map.py
+
+        ## Inputs
+        --contig=$contig
+        --contig_index=$contig_index
+        --soap_config=$soap_config
+
+        ## Check if using default or custom parameters
+        --default_full_settings_type=$default_full_settings.settings_type
+        #if $default_full_settings.settings_type == "full"
+            --ncpu=$ncpu
+            --output_gap_related_reads=$output_gap_related_reads
+            --kmer_r2c=$kmer_r2c
+        #end if
+
+        ## Outputs
+        --pegrads=$pegrads
+        --read_on_contig=$read_on_contig
+        --read_in_gap=$read_in_gap
+
+    </command>
+    <inputs>
+        <param name="soap_config"
+               type="data"
+               format="input"
+               label="config output from SOAPdenovo2 contig"/>
+        <param name="contig"
+               type="data"
+               format="input"
+               label="contig output from SOAPdenovo2 contig"/>
+        <param name="contig_index"
+               type="data"
+               format="input"
+               label="contig_index output from SOAPdenovo2 contig"/>
+        <!--Other parameters -->
+        <conditional name="default_full_settings">
+            <param name="settings_type"
+                   type="select"
+                   label="SOAP settings to use"
+                   help="Default settings is suitable for most mapping needs. If you want full control, use Full parameter list">
+                <option value="default">Default</option>
+                <option value="full">Full parameter list</option>
+            </param>
+            <when value="default"/>
+            <when value="full">
+                <param name="output_gap_related_reads"
+                       type="select"
+                       value="NO"
+                       optional="true"
+                       label="Output gap related reads in map step for using SRkgf to fill gap">
+                    <option value="NO">No</option>
+                    <option value="YES">Yes</option>
+                </param>
+                <param name="ncpu"
+                       type="integer"
+                       value="8"
+                       label="Number of CPUs to use"/>
+                <param name="kmer_r2c"
+                       type="integer"
+                       value="13"
+                       min="13"
+                       max="63"
+                       label="kmer size to be used for mapping reads to contigs"/>
+            </when>
+        </conditional>
+    </inputs>
+    <outputs>
+        <data name="pegrads"
+              format="text"
+              label="pegrads">
+        </data>
+        <data name="read_on_contig"
+              format="text"
+              label="read on contig">
+        </data>
+        <data name="read_in_gap"
+              format="text"
+              label="read in gap">
+        </data>
+    </outputs>
+    <tests>
+        <test>
+            <param name="max_read_length"
+                   value="50"/>
+            <output name="contig"
+                    value="hello world"/>
+        </test>
+    </tests>
+    <help>
+**What it does**
+
+SOAPdenovo is a novel short-read assembly method that can build a de novo draft assembly for the human-sized genomes.
+The program is specially designed to assemble Illumina GA short reads. It creates new opportunities for building
+reference sequences and carrying out accurate analyses of unexplored genomes in a cost effective way.
+
+-----
+
+The map operation in SOAPdenovo2 analyses the outputs created by the previous contig (out.contig and out.ContigIndex) to map the reads onto contigs. The following outputs generated
+by the SOAPdenovo2 map operation:
+
+1. peGrads. Information for each clone library: insert-size, read index upper bound, rank and pair number cutoff for a reliable link. This file can be revised manually for scaffolding tuning.
+2. readOnContig. Reads' locations on contigs. Contigs are referred by their edge index. However, about half of them are not listed in the .contig file for their reverse-complementary counterparts are included already.
+3. readInGap. This file includes reads that could be located in gaps between contigs. This information will be used to close gaps in scaffolds if the -F flag is set.
+    </help>
+</tool>
