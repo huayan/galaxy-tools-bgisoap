@@ -22,6 +22,18 @@ def main():
     parser.add_option('', '--vertex', dest='vertex')
     parser.add_option('', '--pre_arc', dest='pre_arc')
 
+    parser.add_option("", "--analysis_settings_type", dest="analysis_settings_type")
+    parser.add_option("", "--default_full_settings_type", dest="default_full_settings_type")
+
+    parser.add_option("-R", "--resolve_repeats", dest="resolve_repeats", help="Resolve repeats by reads")
+    parser.add_option("-M", "--merge_level", dest="merge_level", help="The strength of merging similar sequences during contiging")
+    parser.add_option("-D", "--edge_cov_cutoff", dest="edge_cov_cutoff", help="Edges with coverage no larger than EdgeCovCutoff will be deleted")
+    parser.add_option("-m", "--max_k", dest="max_k", help="max k when using multi kmer")
+    parser.add_option("-e", "--weight", dest="weight", help="weight to filter arc when linearize two edges")
+    parser.add_option("-s", "--reads_info_file", dest="reads_info_file")
+    parser.add_option("-p", "--ncpu", dest="ncpu", help="Number of cpu for use")
+    parser.add_option("-E", "--merge_clean_bubble", dest="merge_clean_bubble", help="Merge clean bubble before iterate")
+
     #Outputs
     parser.add_option("", "--contig", dest='contig')
     parser.add_option("", "--arc", dest='arc')
@@ -29,9 +41,6 @@ def main():
     parser.add_option("", "--contig_index", dest='contig_index')
 
     opts, args = parser.parse_args()
-
-    #Prepare to run operation
-    #soapdenovo2 contig -g graph_prefix -R 1>contig.log 2>contig.err
 
     #Need to write inputs to a temporary directory
     dirpath = tempfile.mkdtemp()
@@ -50,15 +59,20 @@ def main():
     #Set up command line call
     #TODO - remove hard coded path
     #Code for adding directory path to other file required as output
-    cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer contig -g %s" % (dirpath + "/out")
-    print cmd
 
-    #Perform SOAPdenovo2_config analysis
+    if opts.default_full_settings_type == "default":
+        cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer contig -g %s" % (dirpath + "/out")
+        print cmd
+    elif opts.default_full_settings_type == "full":
+        cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer contig -g %s -R %s -M %s -D %s -e %s -m %s -s %s -p %s -E %s" % (dirpath + "/out", opts.resolve_repeats, opts.merge_level, opts.edge_cov_cutoff, opts.weight, opts.max_k, opts.reads_info_file, opts.ncpu, opts.merge_clean_bubble)
+        print cmd
+
+
+       #Perform SOAPdenovo2_config analysis
     buffsize = 1048576
     #Create temp directory for standard error and out
     tmp_dir = tempfile.mkdtemp()
     try:
-
         tmp_out_file = tempfile.NamedTemporaryFile(dir=tmp_dir).name
         tmp_stdout = open(tmp_out_file, 'wb')
         tmp_err_file = tempfile.NamedTemporaryFile(dir=tmp_dir).name

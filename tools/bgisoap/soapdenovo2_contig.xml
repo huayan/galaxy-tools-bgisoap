@@ -17,6 +17,18 @@
         --updated_edge=$updated_edge
         --contig_index=$contig_index
 
+        ## Check if using default or custom parameters
+        --default_full_settings_type=$default_full_settings.settings_type
+        #if $default_full_settings.settings_type == "full"
+            --resolve_repeats=$resolve_repeats
+            --merge_level=$merge_level
+            --edge_cov_cutoff=$edge_cov_cutoff
+            --weight=$weight
+            --max_k=$max_k
+            --reads_info_file=$reads_info_file
+            --ncpu=$ncpu
+            --merge_clean_bubble=$merge_clean_bubble
+        #end if
     </command>
     <inputs>
         <param name="pre_graph_basic"
@@ -31,6 +43,61 @@
                type="data"
                format="input"
                label="preArc output from SOAPdenovo2 pregraph"/>
+        <!--Other parameters -->
+        <conditional name="default_full_settings">
+        <param name="settings_type"
+               type="select"
+               label="SOAP settings to use"
+               help="Default settings is suitable for most mapping needs. If you want full control, use Full parameter list">
+            <option value="default">Default</option>
+            <option value="full">Full parameter list</option>
+        </param>
+        <when value="default"/>
+        <when value="full">
+            <param name="resolve_repeats"
+                   type="select"
+                   value="NO"
+                   label="Resolve repeats by reads">
+                <option value="NO">No</option>
+                <option value="YES">Yes</option>
+            </param>
+            <param name="merge_level"
+                   type="select"
+                   value="1"
+                   label="Strength of merging similar sequences during contiging">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </param>
+            <param name="edge_cov_cutoff"
+                   type="integer"
+                   value="1"
+                   label="Delete edges with coverage no larger than?"/>
+            <param name="weight"
+                   type="integer"
+                   value="0"
+                   label="Weight to filter arc when linearizing two edges"/>
+            <param name="max_k"
+                   type="integer"
+                   value="1"
+                   label="Max k when using multi-kmer"/>
+            <param name="reads_info_file"
+                   type="text"
+                   label="Information on solexa reads required for when multi-kmer is used"/>
+            <param name="ncpu"
+                   type="integer"
+                   value="8"
+                   label="Number of CPUs to use"/>
+            <param name="merge_clean_bubble"
+                   type="select"
+                   optional="true"
+                   label="Merge clean bubble before iterate">
+                <option value="NO">No</option>
+                <option value="YES">Yes</option>
+            </param>
+        </when>
+        </conditional>
     </inputs>
     <outputs>
         <data name="contig"
