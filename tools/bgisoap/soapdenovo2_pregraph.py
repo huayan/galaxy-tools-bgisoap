@@ -169,15 +169,14 @@ def main():
     #Read soap config file into its output
     config_out = open(opts.soap_config, 'wb')
     file = open(config_file)
-#    file = open(fout)
     for line in file:
         config_out.write(line)
     config_out.close()
     file.close()
 
-    #Sort out filenames
+    # Rename files - this is required by Galaxy to show an unknown number of
+    # multiple outputs at runtime after execution of SOAPdenovo2
     for filename in sorted(os.listdir(database_tmp_dir)):
-#        if filename.endswith( 'preArc' ):
         if "out" in filename:
             print filename
             shutil.move( os.path.join( database_tmp_dir, filename ), os.path.join( database_tmp_dir,
