@@ -1,0 +1,84 @@
+<tool id="soapdenovo2_contig" name="contig" version="0.1" force_history_refresh="True">
+    <description>- from SOAPdenovo2</description>
+    <requirements>
+        <requirement type="package">bgisoap</requirement>
+    </requirements>
+    <command interpreter="python">
+        soapdenovo2_contig.py
+
+        ## Inputs
+        --pre_graph_basic=$pre_graph_basic
+        --vertex=$vertex
+        --pre_arc=$pre_arc
+
+        ## Outputs
+        --contig=$contig
+        --arc=$arc
+        --updated_edge=$updated_edge
+        --contig_index=$contig_index
+
+    </command>
+    <inputs>
+        <param name="pre_graph_basic"
+               type="data"
+               format="input"
+               label="Pregraph output from SOAPdenovo2 pregraph"/>
+        <param name="vertex"
+               type="data"
+               format="input"
+               label="Vertex output from SOAPdenovo2 pregraph"/>
+        <param name="pre_arc"
+               type="data"
+               format="input"
+               label="preArc output from SOAPdenovo2 pregraph"/>
+    </inputs>
+    <outputs>
+        <data name="contig"
+              format="text"
+              label="contig">
+        </data>
+        <data name="arc"
+              format="text"
+              label="arc">
+        </data>
+        <data name="updated_edge"
+              format="text"
+              label="updated edge">
+        </data>
+        <data name="contig_index"
+              format="text"
+              label="contig index">
+        </data>
+    </outputs>
+    <tests>
+        <test>
+            <param name="max_read_length"
+                   value="50"/>
+            <output name="contig"
+                    value="hello world"/>
+        </test>
+    </tests>
+    <help>
+.. class:: infomark
+
+**Note:** This contig operation will not work without having previously run the SOAPdenovo2 pregraph operation on your read data.
+
+-----
+
+**What it does**
+
+SOAPdenovo is a novel short-read assembly method that can build a de novo draft assembly for the human-sized genomes.
+The program is specially designed to assemble Illumina GA short reads. It creates new opportunities for building
+reference sequences and carrying out accurate analyses of unexplored genomes in a cost effective way.
+
+The contig operation in SOAPdenovo2 analyses the outputs created by the previous pregraph (out.preGraphBasic, out.out.vertex
+and out.preArc) to identify contigs made up of sequence reads that overlap with one another. The following output generated
+by the SOAPdenovo2 contig operation:
+
+1. contig. Contig information: corresponding edge index, length, kmer coverage, whether it's tip and the sequence. Either a contig or its reverse complementry counterpart is included. Each reverse complementary contig index is indicated in the .ContigIndex file.
+2. Arc. Arcs coming out of each edge and their corresponding coverage by reads
+3. updated.edge. Some information for each edge in graph: length, Kmers at both ends, index difference between the reverse-complementary edge and this one.
+4. ContigIndex. Each record gives information about each contig in the .contig. it's edge index, length, the index difference between its reverse-complementary counterpart and itself.
+
+    </help>
+</tool>
