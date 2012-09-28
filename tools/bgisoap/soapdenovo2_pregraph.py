@@ -67,22 +67,12 @@ def main():
 
     opts, args = parser.parse_args()
 
-    #Check
-    print opts.file_source
-
-    #Sort out global parameters
-    database_tmp_dir = opts.__new_file_path__ #Where files will be written
-    print "Temp dir: ", database_tmp_dir
-    output_id = opts.soap_config_id
-    print "Output ID: ", output_id
-
     if opts.file_source == "history":
         config_file = opts.config
     else:
         #Create temp file to store soapdenovo2 running configuration
         config_file = tempfile.NamedTemporaryFile(dir=database_tmp_dir, prefix="soap_" + output_id,
             suffix="config").name
-
 
         try:
             fout = open(config_file,'wb')
@@ -166,26 +156,46 @@ def main():
     except Exception, e:
         raise Exception, 'Problem performing pregraph process ' + str(e)
 
-    #Read soap config file into its output
-    config_out = open(opts.soap_config, 'wb')
-    file = open(config_file)
+    #Read files into their outputs
+    kmer_freq_out = open(opts.kmer_freq, 'wb')
+    file = open(dirpath + "/out.kmerFreq")
     for line in file:
-        config_out.write(line)
-    config_out.close()
+        kmer_freq_out.write(line)
+    kmer_freq_out.close()
     file.close()
 
-    # Rename files - this is required by Galaxy to show an unknown number of
-    # multiple outputs at runtime after execution of SOAPdenovo2
-    for filename in sorted(os.listdir(database_tmp_dir)):
-        if "out" in filename:
-            print filename
-            shutil.move( os.path.join( database_tmp_dir, filename ), os.path.join( database_tmp_dir,
-                'primary_%s_%s_visible_txt' % ( output_id, filename ) ) )
+    edge_gz_out = open(opts.edge, 'wb')
+    with open(dirpath + "/out.edge.gz", mode='rb') as file: # b is important -> binary
+        fileContent = file.read()
+        edge_gz_out.write(fileContent)
+    edge_gz_out.close()
+    file.close()
+
+    pre_arc_out = open(opts.pre_arc, 'wb')
+    file = open(dirpath + "/out.preArc")
+    for line in file:
+        pre_arc_out.write(line)
+    pre_arc_out.close()
+    file.close()
+
+    vertex_out = open(opts.vertex, 'wb')
+    file = open(dirpath + "/out.vertex")
+    for line in file:
+        vertex_out.write(line)
+    vertex_out.close()
+    file.close()
+
+    pregraph_basic_out = open(opts.pregraph_basic, 'wb')
+    file = open(dirpath + "/out.vertex")
+    for line in file:
+        pregraph_basic_out.write(line)
+    pregraph_basic_out.close()
+    file.close()
 
     #Clean up temp files
     cleanup_before_exit(tmp_dir)
     #Check results in output file
-    if os.path.getsize(opts.soap_config) > 0:
+    if os.path.getsize(opts.pregraph_basic) > 0:
         sys.stdout.write('Status complete')
     else:
         stop_err("The output is empty")
