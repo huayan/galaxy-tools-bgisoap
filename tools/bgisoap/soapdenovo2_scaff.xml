@@ -20,7 +20,6 @@
             --fill_gaps=$fill_gaps
             --compatible_mode=$compatible_mode
             --unmask_contigs=$unmask_contigs
-            --fill_gaps=$fill_gaps
             --keep_contigs_connected=$keep_contigs_connected
             --ass_visual=$ass_visual
             --gap_len_diff=$gap_len_diff
@@ -102,13 +101,6 @@
                        label=" un-mask contigs with high/low coverage before scaffolding">
                     <option value="mask">Mask</option>
                     <option value="unmask">Unmask</option>
-                </param>
-                <param name="fill_gaps"
-                       type="select"
-                       value="NO"
-                       label="Fill gaps in scaffold">
-                    <option value="NO">No</option>
-                    <option value="YES">Yes</option>
                 </param>
                 <param name="keep_contigs_connected"
                        type="select"
@@ -220,9 +212,17 @@ reference sequences and carrying out accurate analyses of unexplored genomes in 
 
 -----
 
-The scaff operation in SOAPdenovo2 analyses the outputs created by the previous SOAPdenovo2 operations and generated the final assembly results. The following outputs generated
+The scaff operation in SOAPdenovo2 analyses the outputs created by the previous SOAPdenovo2 operations and generates the final assembly results. The following outputs are created
 by the SOAPdenovo2 scaff operation:
 
-1. contig. Contig sequences without using mate pair information.
-2. scafSeq. Scaffold sequences (final contig sequences can be extracted by breaking down scaffold sequences at gap regions).   </help>
+1. newContigIndex. Contigs are sorted according their length before scaffolding. Their new index are listed in this file.  This is useful if one wants to corresponds contigs in *.contig with those in *.links.
+2. links. Links between contigs which are established by read pairs. New index are used.
+3. scaf_gap. Contigs in gaps found by contig graph outputted by the contiging procedure. Here new index are used.
+4. scaf. Contigs for each scaffold: contig index (concordant to index in *.contig),  approximate start position on scaffold, orientation, contig length, and its links to others contigs.
+5. gapSeq. Gap sequences between contigs.
+6. scafSeq. Sequences of each scaffolds. The final contig sequences can be extracted by breaking down scaffold sequences at gap regions.
+7. contigPosInscaff. Contigs' positions in each scaffold.
+8. bubbleInScaff. Contigs that form bubble structures in scaffolds. Every two contigs form a bubble and the contig with higher coverage will be kept in scaffold.
+9. scafStatistics. Statistic information of the final scaffold and its contigs.
+    </help>
 </tool>
