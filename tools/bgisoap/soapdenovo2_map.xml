@@ -1,5 +1,4 @@
 <tool id="soapdenovo2_map" name="map" version="0.1" force_history_refresh="True">
-    <description>- from SOAPdenovo2</description>
     <requirements>
         <requirement type="package">bgisoap</requirement>
     </requirements>

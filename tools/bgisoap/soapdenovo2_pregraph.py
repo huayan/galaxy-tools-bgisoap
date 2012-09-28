@@ -58,24 +58,26 @@ def main():
     parser.add_option("-R", "--output_extra_info", dest="output_extra_info", help="Output extra information for resolving repeats in contig step")
 
     #Outputs
-    parser.add_option("", "--pregraph_basic", dest='pregraph_basic', help="pregraph_basic data")
-    parser.add_option("", "--soap_config", dest='soap_config', help="Contig sequence file")
-
-    #Parameters needed to output files in directory
-    parser.add_option("", "--soap_config.id", dest='soap_config_id')
-    parser.add_option("", "--__new_file_path__", dest='__new_file_path__')
+    parser.add_option("", "--pregraph_basic", dest='pregraph_basic')
+    parser.add_option("", "--vertex", dest='vertex')
+    parser.add_option("", "--pre_arc", dest='pre_arc')
+    parser.add_option("", "--edge", dest='edge')
+    parser.add_option("", "--kmer_freq", dest='kmer_freq')
+    parser.add_option("", "--soap_config", dest='soap_config')
 
     opts, args = parser.parse_args()
+
+    #Need a temporary directory to perform processing
+    dirpath = tempfile.mkdtemp()
 
     if opts.file_source == "history":
         config_file = opts.config
     else:
         #Create temp file to store soapdenovo2 running configuration
-        config_file = tempfile.NamedTemporaryFile(dir=database_tmp_dir, prefix="soap_" + output_id,
-            suffix="config").name
+        config_file = tempfile.NamedTemporaryFile(dir=dirpath, prefix="soap_",suffix=".config").name
 
         try:
-            fout = open(config_file,'wb')
+            fout = open(config_file,'w')
             fout.write("max_rd_len=%s\n" % opts.max_read_length)
             #Calculate how many sets of data there are - use avg_ins as a measure of this
             #Separate indices required to keep count of reads
@@ -114,13 +116,12 @@ def main():
                     paired_read_index = paired_read_index + 1
             fout.close()
         except Exception, e:
-            stop_err("File cannot be opened for writing soap.config" + str(e))
+            stop_err("File cannot be opened for writing soap.config " + str(e))
 
     #Set up command line call
     #TODO - remove hard coded path
     #Code for adding directory path to other file required as output
-    cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer pregraph -s %s -K 63 -o %s" % (config_file,
-                                                                                              database_tmp_dir + "/out")
+    cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer pregraph -s %s -K 55 -o %s" % (config_file, dirpath + "/out")
     print cmd
 
     #Perform SOAPdenovo2_pregraph analysis
@@ -136,7 +137,7 @@ def main():
 
         #Call SOAPdenovo2
         #New additional datasets must be placed in the directory provided by $__new_file_path__
-        proc = subprocess.Popen(args=cmd, shell=True, cwd=database_tmp_dir, stdout=tmp_stdout, stderr=tmp_stderr.fileno())
+        proc = subprocess.Popen(args=cmd, shell=True, cwd=dirpath, stdout=tmp_stdout, stderr=tmp_stderr.fileno())
         returncode = proc.wait()
         #Get stderr, allowing for case where it's very large
         tmp_stderr = open(tmp_err_file, 'rb')
@@ -186,10 +187,17 @@ def main():
     file.close()
 
     pregraph_basic_out = open(opts.pregraph_basic, 'wb')
-    file = open(dirpath + "/out.vertex")
+    file = open(dirpath + "/out.preGraphBasic")
     for line in file:
         pregraph_basic_out.write(line)
     pregraph_basic_out.close()
+    file.close()
+
+    config_out = open(opts.soap_config, 'wb')
+    file = open(config_file)
+    for line in file:
+        config_out.write(line)
+    config_out.close()
     file.close()
 
     #Clean up temp files

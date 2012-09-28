@@ -1,5 +1,4 @@
 <tool id="soapdenovo2_scaff" name="scaff" version="0.1" force_history_refresh="True">
-    <description>- from SOAPdenovo2</description>
     <requirements>
         <requirement type="package">bgisoap</requirement>
     </requirements>
@@ -13,6 +12,7 @@
         --updated_edge=$updated_edge
         --contig=$contig
         --read_in_gap=$read_in_gap
+        --read_on_contig=$read_on_contig
 
         ## Check if using default or custom parameters
         --default_full_settings_type=$default_full_settings.settings_type
@@ -68,6 +68,10 @@
                type="data"
                format="input"
                label="readInGap.gz output from SOAPdenovo2 map"/>
+        <param name="read_on_contig"
+               type="data"
+               format="input"
+               label="readOnContig.gz output from SOAPdenovo2 map"/>
 
         <!--Other parameters -->
         <conditional name="default_full_settings">

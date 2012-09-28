@@ -21,6 +21,7 @@ def main():
     parser.add_option('', '--pre_graph_basic', dest='pre_graph_basic')
     parser.add_option('', '--vertex', dest='vertex')
     parser.add_option('', '--pre_arc', dest='pre_arc')
+    parser.add_option('', '--edge_gz', dest='edge_gz')
 
     parser.add_option("", "--analysis_settings_type", dest="analysis_settings_type")
     parser.add_option("", "--default_full_settings_type", dest="default_full_settings_type")
@@ -44,24 +45,40 @@ def main():
 
     #Need to write inputs to a temporary directory
     dirpath = tempfile.mkdtemp()
-    f = open(dirpath + '/out.preGraphBasic', 'w')
-    f.write(opts.pre_graph_basic)
-    f.close
+    pre_graph_basic_data = open(opts.pre_graph_basic, 'r')
+    pre_graph_basic_file = open(dirpath + "/out.preGraphBasic", "w")
+    for line in pre_graph_basic_data:
+        pre_graph_basic_file.write(line)
+    pre_graph_basic_data.close()
+    pre_graph_basic_file.close()
 
-    f = open(dirpath + '/out.vertex', 'w')
-    f.write(opts.vertex)
-    f.close
+    vertex_data = open(opts.vertex, 'r')
+    vertex_file = open(dirpath + "/out.vertex", "w")
+    for line in vertex_data:
+        vertex_file.write(line)
+    vertex_data.close()
+    vertex_file.close()
 
-    f = open(dirpath + '/out.preArc', 'w')
-    f.write(opts.pre_arc)
-    f.close
+    pre_arc_data = open(opts.pre_arc, 'r')
+    pre_arc_file = open(dirpath + "/out.preArc", "w")
+    for line in pre_arc_data:
+        pre_arc_file.write(line)
+    pre_arc_data.close()
+    pre_arc_file.close()
+
+    edge_gz_data = open(opts.edge_gz, 'rb')
+    edge_gz_file = open(dirpath + "/out.edge.gz", "wb")
+    for line in edge_gz_data:
+        edge_gz_file.write(line)
+    edge_gz_data.close()
+    edge_gz_file.close()
 
     #Set up command line call
     #TODO - remove hard coded path
     #Code for adding directory path to other file required as output
 
     if opts.default_full_settings_type == "default":
-        cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer contig -g %s" % (dirpath + "/out")
+        cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer contig -g %s -M 1 -R" % (dirpath + "/out")
         print cmd
     elif opts.default_full_settings_type == "full":
         cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer contig -g %s -R %s -M %s -D %s -e %s -m %s -s %s -p %s -E %s" % (dirpath + "/out", opts.resolve_repeats, opts.merge_level, opts.edge_cov_cutoff, opts.weight, opts.max_k, opts.reads_info_file, opts.ncpu, opts.merge_clean_bubble)
@@ -80,7 +97,7 @@ def main():
 
         #Call SOAPdenovo2
         #New additional datasets must be placed in the directory provided by $__new_file_path__
-        proc = subprocess.Popen(args=cmd, shell=True, cwd=tmp_dir, stdout=tmp_stdout, stderr=tmp_stderr.fileno())
+        proc = subprocess.Popen(args=cmd, shell=True, cwd=dirpath, stdout=tmp_stdout, stderr=tmp_stderr.fileno())
         returncode = proc.wait()
         #Get stderr, allowing for case where it's very large
         tmp_stderr = open(tmp_err_file, 'rb')
@@ -98,10 +115,10 @@ def main():
         if returncode != 0:
             raise Exception, stderr
     except Exception, e:
-        raise Exception, 'Problem performing pregraph process ' + str(e)
+        raise Exception, 'Problem performing contig process ' + str(e)
 
     #Read soap config file into its output
-    contig_index_out = open(opts.contig_index, 'wb')
+    contig_index_out = open(opts.contig_index, 'w')
     file = open(dirpath + "/out.ContigIndex")
     for line in file:
         contig_index_out.write(line)
@@ -109,7 +126,7 @@ def main():
     file.close()
 
     #Read soap config file into its output
-    arc_out = open(opts.arc, 'wb')
+    arc_out = open(opts.arc, 'w')
     file = open(dirpath + "/out.Arc")
     for line in file:
         arc_out.write(line)
@@ -117,7 +134,7 @@ def main():
     file.close()
 
     #Read soap config file into its output
-    contig_out = open(opts.contig, 'wb')
+    contig_out = open(opts.contig, 'w')
     file = open(dirpath + "/out.contig")
     for line in file:
         contig_out.write(line)
@@ -125,7 +142,7 @@ def main():
     file.close()
 
     #Read soap config file into its output
-    edge_out = open(opts.updated_edge, 'wb')
+    edge_out = open(opts.updated_edge, 'w')
     file = open(dirpath + "/out.updated.edge")
     for line in file:
         edge_out.write(line)

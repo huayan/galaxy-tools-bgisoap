@@ -24,6 +24,7 @@ def main():
     parser.add_option('', '--updated_edge', dest='updated_edge')
     parser.add_option('', '--contig', dest='contig')
     parser.add_option('', '--read_in_gap', dest='read_in_gap')
+    parser.add_option('', '--read_on_contig', dest='read_on_contig')
 
     parser.add_option("", "--analysis_settings_type", dest="analysis_settings_type")
     parser.add_option("", "--default_full_settings_type", dest="default_full_settings_type")
@@ -45,6 +46,7 @@ def main():
     parser.add_option("", "--new_contig_index", dest='new_contig_index')
     parser.add_option("", "--links", dest='links')
     parser.add_option("", "--scaf_gap", dest='scaf_gap')
+    parser.add_option("", "--gap_seq", dest='gap_seq')
     parser.add_option("", "--scaf", dest='scaf')
     parser.add_option("", "--scaf_seq", dest='scaf_seq')
     parser.add_option("", "--contig_positions_scaff", dest='contig_positions_scaff')
@@ -55,29 +57,72 @@ def main():
 
     #Need to write inputs to a temporary directory
     dirpath = tempfile.mkdtemp()
-    f = open(dirpath + '/out.Arc', 'w')
-    f.write(opts.arc)
-    f.close
+    arc_data = open(opts.arc, 'r')
+    arc_file = open(dirpath + "/out.Arc", "w")
+    for line in arc_data:
+        arc_file.write(line)
+    arc_data.close()
+    arc_file.close()
 
-    f = open(dirpath + '/out.peGrads', 'w')
-    f.write(opts.pegrads)
-    f.close
+    pegrads_data = open(opts.pegrads, 'r')
+    pegrads_file = open(dirpath + "/out.peGrads", "w")
+    for line in pegrads_data:
+        pegrads_file.write(line)
+    pegrads_data.close()
+    pegrads_file.close()
 
-    f = open(dirpath + '/out.preGraphBasic', 'w')
-    f.write(opts.pregraph_basic)
-    f.close
+    pregraph_basic_data = open(opts.pregraph_basic, 'r')
+    pregraph_basic_file = open(dirpath + "/out.preGraphBasic", "w")
+    for line in pregraph_basic_data:
+        pregraph_basic_file.write(line)
+    pregraph_basic_data.close()
+    pregraph_basic_file.close()
 
-    f = open(dirpath + '/out.updated.edge', 'w')
-    f.write(opts.updated_edge)
-    f.close
+    updated_edge_data = open(opts.updated_edge, 'r')
+    updated_edge_file = open(dirpath + "/out.updated.edge", "w")
+    for line in updated_edge_data:
+        updated_edge_file.write(line)
+    updated_edge_data.close()
+    updated_edge_file.close()
 
-    f = open(dirpath + '/out.contig', 'w')
-    f.write(opts.contig)
-    f.close
+    contig_data = open(opts.contig, 'r')
+    contig_file = open(dirpath + "/out.contig", "w")
+    for line in contig_data:
+        contig_file.write(line)
+    contig_data.close()
+    contig_file.close()
 
-    f = open(dirpath + '/out.readInGap.gz', 'w')
-    f.write(opts.read_in_gap)
-    f.close
+    read_in_gap_out = open(dirpath + "/out.readInGap.gz", "wb")
+    with open(opts.read_in_gap, mode='rb') as file: # b is important -> binary
+        fileContent = file.read()
+        read_in_gap_out.write(fileContent)
+    read_in_gap_out.close()
+    file.close()
+
+    read_on_contig_out = open(dirpath + "/out.readOnContig.gz", "wb")
+    with open(opts.read_on_contig, mode='rb') as file: # b is important -> binary
+        fileContent = file.read()
+        read_on_contig_out.write(fileContent)
+    read_on_contig_out.close()
+    file.close()
+
+#    f=open(dirpath + "/out.readOnContig.gz", "wb")
+#    f.write(opts.read_on_contig)
+#    f.close()
+
+#    read_in_gap_out = open(opts.read_in_gap, 'wb')
+#    with open(dirpath + "/out.readInGap.gz", mode='rb') as file: # b is important -> binary
+#        fileContent = file.read()
+#        read_in_gap_out.write(fileContent)
+#    read_in_gap_out.close()
+#    file.close()
+#
+#    read_on_contig_out = open(opts.read_on_contig, 'wb')
+#    with open(dirpath + "/out.readOnContig.gz", mode='rb') as file: # b is important -> binary
+#        fileContent = file.read()
+#        read_on_contig_out.write(fileContent)
+#    read_on_contig_out.close()
+#    file.close()
 
     #Set up command line call
     #TODO - remove hard coded path
@@ -106,7 +151,7 @@ def main():
 
         #Call SOAPdenovo2
         #New additional datasets must be placed in the directory provided by $__new_file_path__
-        proc = subprocess.Popen(args=cmd, shell=True, cwd=tmp_dir, stdout=tmp_stdout, stderr=tmp_stderr.fileno())
+        proc = subprocess.Popen(args=cmd, shell=True, cwd=dirpath, stdout=tmp_stdout, stderr=tmp_stderr.fileno())
         returncode = proc.wait()
         #Get stderr, allowing for case where it's very large
         tmp_stderr = open(tmp_err_file, 'rb')
@@ -146,6 +191,13 @@ def main():
     for line in file:
         scaf_gap_out.write(line)
     scaf_gap_out.close()
+    file.close()
+
+    gap_seq_out = open(opts.gap_seq, 'wb')
+    file = open(dirpath + "/out.gapSeq")
+    for line in file:
+        gap_seq_out.write(line)
+    gap_seq_out.close()
     file.close()
 
     scaf_out = open(opts.scaf, 'wb')

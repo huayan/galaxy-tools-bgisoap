@@ -14,6 +14,9 @@
     <tool file="bgisoap/soapdenovotrans.xml"/>
     <label id="soapdenovo2_mods" text="SOAPdenovo2 modules"/>
     <tool file="bgisoap/soapdenovo2_pregraph.xml"/>
+    <tool file="bgisoap/soapdenovo2_contig.xml"/>
+    <tool file="bgisoap/soapdenovo2_map.xml"/>
+    <tool file="bgisoap/soapdenovo2_scaff.xml"/>
   </section>
   <section name="NGS: Splice Detection" id="bgi_splice_detection">
       <tool file="bgisoap/soapsplice.xml"/>

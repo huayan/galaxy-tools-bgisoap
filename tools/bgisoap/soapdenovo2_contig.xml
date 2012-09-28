@@ -1,5 +1,4 @@
 <tool id="soapdenovo2_contig" name="contig" version="0.1" force_history_refresh="True">
-    <description>- from SOAPdenovo2</description>
     <requirements>
         <requirement type="package">bgisoap</requirement>
     </requirements>
@@ -10,6 +9,7 @@
         --pre_graph_basic=$pre_graph_basic
         --vertex=$vertex
         --pre_arc=$pre_arc
+        --edge_gz=$edge_gz
 
         ## Outputs
         --contig=$contig
@@ -43,6 +43,10 @@
                type="data"
                format="input"
                label="preArc output from SOAPdenovo2 pregraph"/>
+        <param name="edge_gz"
+               type="data"
+               format="input"
+               label="edge.gz output from SOAPdenovo2 pregraph"/>
         <!--Other parameters -->
         <conditional name="default_full_settings">
         <param name="settings_type"
