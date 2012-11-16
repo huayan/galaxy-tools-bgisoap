@@ -7,7 +7,7 @@
 
         ## Inputs
         --contig=$contig
-        --contig_index=$contig_index
+        --contigindex=$contigindex
         --soap_config=$soap_config
 
         ## Check if using default or custom parameters
@@ -33,10 +33,10 @@
                type="data"
                format="input"
                label="contig output from SOAPdenovo2 contig"/>
-        <param name="contig_index"
+        <param name="contigindex"
                type="data"
                format="input"
-               label="contig_index output from SOAPdenovo2 contig"/>
+               label="contig index output from SOAPdenovo2 contig"/>
         <!--Other parameters -->
         <conditional name="default_full_settings">
             <param name="settings_type"

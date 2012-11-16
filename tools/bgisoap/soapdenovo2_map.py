@@ -1,6 +1,6 @@
 """
 soapdenovo2_map.py
-A wrapper script for SOAPdenovo2 pregraph module
+A wrapper script for SOAPdenovo2 map module
 Copyright   Peter Li - GigaScience and BGI-HK
 """
 
@@ -19,11 +19,12 @@ def main():
     parser = optparse.OptionParser()
     #Inputs
     parser.add_option('', '--contig', dest='contig')
-    parser.add_option('', '--contig_index', dest='contig_index')
+    parser.add_option('', '--contigindex', dest='contigindex')
     parser.add_option('', '--soap_config', dest='soap_config')
 
     parser.add_option("", "--analysis_settings_type", dest="analysis_settings_type")
     parser.add_option("", "--default_full_settings_type", dest="default_full_settings_type")
+
     parser.add_option("-p", "--ncpu", dest="ncpu", help="Number of cpu for use")
     parser.add_option("-f", "--output_gap_related_reads", dest="output_gap_related_reads")
     parser.add_option("-k", "--kmer_r2c", dest="kmer_r2c")
@@ -35,22 +36,26 @@ def main():
 
     opts, args = parser.parse_args()
 
-    #Need to write inputs to a temporary directory
+    #Need to write inputs to files in a temporary directory for use by executable
     dirpath = tempfile.mkdtemp()
-    f = open(dirpath + '/soap.config', 'w')
-    f.write(opts.soap_config)
-    f.close
 
-    f = open(dirpath + '/out.contig', 'w')
-    f.write(opts.contig)
-    f.close
+    contig_data = open(opts.contig, 'r')
+    contig_file = open(dirpath + "/out.contig", "w")
+    for line in contig_data:
+        contig_file.write(line)
+    contig_data.close()
+    contig_file.close()
 
-    f = open(dirpath + '/out.ContigIndex', 'w')
-    f.write(opts.contig_index)
-    f.close
+    contigindex_data = open(opts.contigindex, 'r')
+    contigindex_file = open(dirpath + "/out.ContigIndex", "w")
+    for line in contigindex_data:
+        contigindex_file.write(line)
+    contigindex_data.close()
+    contigindex_file.close()
 
     #Set up command line call
-    #TODO - remove hard coded path
+    #TODO - remove hard coded path; shouldn't need the full path to the executable as SOAPdenovo-63mer is declared on the path
+    #TODO - Need to declare path to Galaxy
     #Code for adding directory path to other file required as output
     if opts.default_full_settings_type == "default":
         cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer map -s %s -g %s" % (opts.soap_config, dirpath + "/out")
@@ -60,20 +65,18 @@ def main():
     #Check
     print cmd
 
-    #Perform SOAPdenovo2_config analysis
+    #Perform SOAPdenovo2_map analysis
     buffsize = 1048576
     #Create temp directory for standard error and out
     tmp_dir = tempfile.mkdtemp()
     try:
-
         tmp_out_file = tempfile.NamedTemporaryFile(dir=tmp_dir).name
         tmp_stdout = open(tmp_out_file, 'wb')
         tmp_err_file = tempfile.NamedTemporaryFile(dir=tmp_dir).name
         tmp_stderr = open(tmp_err_file, 'wb')
 
         #Call SOAPdenovo2
-        #New additional datasets must be placed in the directory provided by $__new_file_path__
-        proc = subprocess.Popen(args=cmd, shell=True, cwd=tmp_dir, stdout=tmp_stdout, stderr=tmp_stderr.fileno())
+        proc = subprocess.Popen(args=cmd, shell=True, cwd=dirpath, stdout=tmp_stdout, stderr=tmp_stderr.fileno())
         returncode = proc.wait()
         #Get stderr, allowing for case where it's very large
         tmp_stderr = open(tmp_err_file, 'rb')
@@ -91,42 +94,28 @@ def main():
         if returncode != 0:
             raise Exception, stderr
     except Exception, e:
-        raise Exception, 'Problem performing pregraph process ' + str(e)
+        raise Exception, 'Problem performing map process ' + str(e)
 
-    #Read soap config file into its output
-    pegrads_out = open(opts.pegrads, 'wb')
+    pegrads_out = open(opts.pegrads, 'w')
     file = open(dirpath + "/out.peGrads")
     for line in file:
         pegrads_out.write(line)
     pegrads_out.close()
     file.close()
 
-    #Read soap config file into its output
     read_on_contig_out = open(opts.read_on_contig, 'wb')
     with open(dirpath + "/out.readOnContig.gz", mode='rb') as file: # b is important -> binary
         fileContent = file.read()
         read_on_contig_out.write(fileContent)
-
     read_on_contig_out.close()
     file.close()
 
-    #Read soap config file into its output
     read_in_gap_out = open(opts.read_in_gap, 'wb')
     with open(dirpath + "/out.readInGap.gz", mode='rb') as file: # b is important -> binary
         fileContent = file.read()
         read_in_gap_out.write(fileContent)
-
     read_in_gap_out.close()
     file.close()
-
-
-    # Rename files - this is required by Galaxy to show an unknown number of
-    # multiple outputs at runtime after execution of SOAPdenovo2
-    #    for filename in sorted(os.listdir(database_tmp_dir)):
-    #        if "out" in filename:
-    #            print filename
-    #            shutil.move( os.path.join( database_tmp_dir, filename ), os.path.join( database_tmp_dir,
-    #                'primary_%s_%s_visible_txt' % ( output_id, filename ) ) )
 
     #Clean up temp files
     cleanup_before_exit(tmp_dir)

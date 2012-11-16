@@ -1,6 +1,6 @@
 """
 soapdenovo2_contig.py
-A wrapper script for SOAPdenovo2 pregraph module
+A wrapper script for SOAPdenovo2 contig module
 Copyright   Peter Li - GigaScience and BGI-HK
 """
 
@@ -85,7 +85,7 @@ def main():
         print cmd
 
 
-       #Perform SOAPdenovo2_config analysis
+    #Perform SOAPdenovo2_config analysis
     buffsize = 1048576
     #Create temp directory for standard error and out
     tmp_dir = tempfile.mkdtemp()
