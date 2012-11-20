@@ -12,6 +12,7 @@
     <tool file="bgisoap/soapdenovo.xml"/>
     <tool file="bgisoap/soapdenovo2.xml"/>
     <tool file="bgisoap/soapdenovotrans.xml"/>
+    <tool file="bgisoap/gapcloser.xml"/>
     <label id="soapdenovo2_mods" text="SOAPdenovo2 modules"/>
     <tool file="bgisoap/soapdenovo2_pregraph.xml"/>
     <tool file="bgisoap/soapdenovo2_contig.xml"/>
