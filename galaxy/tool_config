@@ -28,3 +28,6 @@
         <tool file="bgisoap/alleleqc.xml"/>
         <tool file="bgisoap/snvdetect.xml"/>
   </section>
+  <section name="NGS: Supporting tools" id="bgi_supporting">
+        <tool file="bgisoap/msort.xml"/>
+  </section>
