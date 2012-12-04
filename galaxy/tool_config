@@ -13,11 +13,16 @@
     <tool file="bgisoap/soapdenovo2.xml"/>
     <tool file="bgisoap/soapdenovotrans.xml"/>
     <tool file="bgisoap/gapcloser.xml"/>
+    <tool file="bgisoap/correction.xml"/>
     <label id="soapdenovo2_mods" text="SOAPdenovo2 modules"/>
     <tool file="bgisoap/soapdenovo2_pregraph.xml"/>
     <tool file="bgisoap/soapdenovo2_contig.xml"/>
     <tool file="bgisoap/soapdenovo2_map.xml"/>
     <tool file="bgisoap/soapdenovo2_scaff.xml"/>
+    <label id="correction" text="Correction package"/>
+        <tool file="bgisoap/kmerfreq.xml"/>
+        <tool file="bgisoap/corrector.xml"/>
+        <tool file="bgisoap/mergepairlist.xml"/>
   </section>
   <section name="NGS: Splice Detection" id="bgi_splice_detection">
       <tool file="bgisoap/soapsplice.xml"/>
@@ -30,4 +35,5 @@
   </section>
   <section name="NGS: Supporting tools" id="bgi_supporting">
         <tool file="bgisoap/msort.xml"/>
+        <tool file="bgisoap/prepare.xml"/>
   </section>
