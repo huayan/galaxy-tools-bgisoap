@@ -14,6 +14,7 @@
     <tool file="bgisoap/soapdenovotrans.xml"/>
     <tool file="bgisoap/gapcloser.xml"/>
     <tool file="bgisoap/correction.xml"/>
+    <tool file="bgisoap/prepare.xml"/>
     <label id="soapdenovo2_mods" text="SOAPdenovo2 modules"/>
     <tool file="bgisoap/soapdenovo2_pregraph.xml"/>
     <tool file="bgisoap/soapdenovo2_contig.xml"/>
@@ -35,5 +36,4 @@
   </section>
   <section name="NGS: Supporting tools" id="bgi_supporting">
         <tool file="bgisoap/msort.xml"/>
-        <tool file="bgisoap/prepare.xml"/>
   </section>
