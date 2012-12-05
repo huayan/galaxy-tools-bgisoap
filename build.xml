@@ -88,7 +88,7 @@
         <!-- Need to insert the BGI SOAP declarations in the 3rd line of tool_config -->
         <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask"
                  classpath="${lib.dir}/xmltask.jar"/>
-        <xmltask source="./galaxy-central/tool_conf.xml.main" dest="${galaxy.build.dir}/tool_conf.xml">
+        <xmltask source="./${galaxy.src}/tool_conf.xml.main" dest="${galaxy.build.dir}/tool_conf.xml">
             <insert path="/toolbox" file="./galaxy/tool_config"/>
         </xmltask>
 
