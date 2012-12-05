@@ -15,6 +15,7 @@
         #end for
         --out_stat=$out_stat ##output
         --out_freq=$out_freq ##output
+        --out_filelist=$out_filelist ##output
         ## Check if using default or custom parameters
         --default_full_settings_type=$default_full_settings.settings_type
         #if $default_full_settings.settings_type == "full"
@@ -51,6 +52,7 @@
     <outputs>
         <data name="stat" format="Tabular" label="Statistics file"/>
         <data name="freq" format="Tabular" label="Frequency information"/>
+        <data name="filelist" format="Tabular" label="List of files processed by KmerFreq"/>
     </outputs>
     <tests>
         <test>
