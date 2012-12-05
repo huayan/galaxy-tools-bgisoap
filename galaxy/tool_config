@@ -36,4 +36,5 @@
   </section>
   <section name="NGS: Supporting tools" id="bgi_supporting">
         <tool file="bgisoap/msort.xml"/>
+        <tool file="bgisoap/sam2soap.xml"/>
   </section>
