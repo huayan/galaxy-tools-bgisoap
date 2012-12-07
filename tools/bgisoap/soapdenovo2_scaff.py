@@ -128,9 +128,9 @@ def main():
     #TODO - remove hard coded path
     #Code for adding directory path to other file required as output
     if opts.default_full_settings_type == "default":
-        cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer scaff -g %s -F" % (dirpath + "/out")
+        cmd = "SOAPdenovo-63mer scaff -g %s -F" % (dirpath + "/out")
     elif opts.default_full_settings_type == "full":
-        cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer scaff -g %s -F %s -z %s -u %s -w %s -v %s -G %s -L %s -c %s -C %s -b %s -B %s -N %s -p %s" % (dirpath + "/out",
+        cmd = "SOAPdenovo-63mer scaff -g %s -F %s -z %s -u %s -w %s -v %s -G %s -L %s -c %s -C %s -b %s -B %s -N %s -p %s" % (dirpath + "/out",
             opts.fill_gaps, opts.compatible_mode, opts.unmask_contigs, opts.keep_contigs_connected, opts.ass_visual, opts.gap_len_diff,
             opts.min_contig_len, opts.min_contig_cvg, opts.max_contig_cvg, opts.insert_size_upper_bound, opts.bubble_coverage,
             opts.genome_size, opts.ncpu)
