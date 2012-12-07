@@ -78,10 +78,10 @@ def main():
     #Code for adding directory path to other file required as output
 
     if opts.default_full_settings_type == "default":
-        cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer contig -g %s -M 1 -R" % (dirpath + "/out")
+        cmd = "SOAPdenovo-63mer contig -g %s -M 1 -R" % (dirpath + "/out")
         print cmd
     elif opts.default_full_settings_type == "full":
-        cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer contig -g %s -R %s -M %s -D %s -e %s -m %s -s %s -p %s -E %s" % (dirpath + "/out", opts.resolve_repeats, opts.merge_level, opts.edge_cov_cutoff, opts.weight, opts.max_k, opts.reads_info_file, opts.ncpu, opts.merge_clean_bubble)
+        cmd = "SOAPdenovo-63mer contig -g %s -R %s -M %s -D %s -e %s -m %s -s %s -p %s -E %s" % (dirpath + "/out", opts.resolve_repeats, opts.merge_level, opts.edge_cov_cutoff, opts.weight, opts.max_k, opts.reads_info_file, opts.ncpu, opts.merge_clean_bubble)
         print cmd
 
 
@@ -161,7 +161,7 @@ def main():
     cleanup_before_exit(tmp_dir)
     #Check results in output file
     if os.path.getsize(opts.contig_index) > 0:
-        sys.stdout.write('Status complete')
+        sys.stdout.write('Status complete for contig process')
     else:
         stop_err("The output is empty")
 

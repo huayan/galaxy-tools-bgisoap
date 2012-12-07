@@ -143,8 +143,11 @@ The program is specially designed to assemble Illumina GA short reads. It create
 reference sequences and carrying out accurate analyses of unexplored genomes in a cost effective way.
 
 The contig operation in SOAPdenovo2 analyses the outputs created by the previous pregraph (out.preGraphBasic, out.out.vertex
-and out.preArc) to identify contigs made up of sequence reads that overlap with one another. The following output generated
-by the SOAPdenovo2 contig operation:
+and out.preArc) to identify contigs made up of sequence reads that overlap with one another.
+
+-----
+
+**Output files from pregraph**
 
 1. contig. Contig information: corresponding edge index, length, kmer coverage, whether it's tip and the sequence. Either a contig or its reverse complementry counterpart is included. Each reverse complementary contig index is indicated in the .ContigIndex file.
 2. Arc. Arcs coming out of each edge and their corresponding coverage by reads
