@@ -236,7 +236,7 @@
             <when value="full">
                 <param name="kmer_size"
                        type="integer"
-                       value="63"
+                       value="23"
                        label="k value in kmer"
                        min="13"
                        max="127"/>
@@ -246,19 +246,19 @@
                        label="Number of CPUs to use"/>
                 <param name="init_memory_assumption"
                        type="integer"
-                       label="Initiate the memory assumption to avoid further reallocation, unit G"
+                       label="Initialize memory assumption to avoid further reallocation, unit GB"
                        value="0"/>
                 <param name="output_extra_info"
                        type="select"
                        value="NO"
-                       label="Output extra information for resolving repeats in contig step">
+                       label="Provide extra information for resolving repeats in contig step?">
                     <option value="NO">No</option>
                     <option value="YES">Yes</option>
                 </param>
                 <param name="kmer_freq_cutoff"
                        type="integer"
                        value="0"
-                       label="Delete kmers with frequency no larger than?"/>
+                       label="K-mer frequency limit. K-mers with higher frequencies will  be removed from processing"/>
             </when>
         </conditional>
     </inputs>
@@ -303,19 +303,33 @@ SOAPdenovo is a novel short-read assembly method that can build a de novo draft 
 The program is specially designed to assemble Illumina GA short reads. It creates new opportunities for building
 reference sequences and carrying out accurate analyses of unexplored genomes in a cost effective way.
 
-The pregraph step in SOAPdenovo2 is responsible for loading raw read data into memory and constructing the Bruijn graph structure which is used to represent overlap between reads.
+The pregraph step in SOAPdenovo2 is responsible for loading raw read data into memory and constructing the Bruijn graph
+structure which is used to represent the overlap between reads.
 
 -----
 
-**Output files from pregraph**
+Output files from pregraph::
 
-1. kmerFreq. Each row shows the number of Kmers with a frequency equals the row number. Note that those peaks of frequencies which are the integral multiple of 63 are due to the data structure.
-2. edge. Each record gives the information of an edge in the pre-graph: length, Kmers on both ends, average kmer coverage, whether it's reverse-complementarily identical and the sequence.
-3. markOnEdge and path. These two files are for using reads to solve small repeats.
-4. preArc. Connections between edges which are established by the read paths.
-5. vertex. Kmers at the ends of edges.
-6. preGraphBasic. Some basic information about the pre-graph: number of vertex, K value, number of edges, maximum read length etc.
-7. Configuration file.
+  kmerFreq          Each row shows the number of Kmers with a frequency equals the row number.
+                    Note that those peaks of frequencies which are the integral multiple of 63
+                    are due to the data structure.
+
+  edge              Each record gives the information of an edge in the pre-graph: length, k-mers
+                    on both ends, average kmer coverage, whether it's reverse-complementarily
+                    identical and the sequence.
+
+  markOnEdge        For using reads to solve small repeats.
+
+  path              For using reads to solve small repeats.
+
+  preArc            Contains information about the connections between edges which are established by the read paths.
+
+  vertex            K-mers at the ends of edges.
+
+  preGraphBasic     Shows basic information about the pre-graph: number of vertex, K value, number of edges, maximum
+                    read length, etc.
+
+  config file       Contains information required by the SOAPdenovo2 process.
 
 -----
 

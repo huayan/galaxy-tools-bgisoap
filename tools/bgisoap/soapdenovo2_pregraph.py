@@ -119,9 +119,16 @@ def main():
             stop_err("File cannot be opened for writing soap.config " + str(e))
 
     #Set up command line call
-    #TODO - remove hard coded path
     #Code for adding directory path to other file required as output
-    cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer pregraph -s %s -K 55 -o %s" % (config_file, dirpath + "/out")
+    if opt.kmer_size <= 63 and opts.default_full_settings_type == "default":
+        cmd = "SOAPdenovo-63mer pregraph -s %s -o %s" % (config_file, dirpath + "/out")
+    elif opt.kmer_size <= 63  and opts.default_full_settings_type == "full":
+        cmd = "SOAPdenovo-63mer pregraph -s %s -o %s -K %s -p %s -a %s -d %s -R %s" % (config_file, dirpath + "/out", opts.kmer_size, opts.ncpu, opts.init_mem_assumption, opts.kmer_freq_cutoff, opts.output_extra_info)
+    elif opt.kmer_size > 63 and opts.default_full_settings_type == "default":
+        cmd = "SOAPdenovo-127mer pregraph -s %s -K %s -o %s" % (config_file, opts.kmer_size, dirpath + "/out")
+    else:
+        cmd = "SOAPdenovo-127mer pregraph -s %s -o %s -K %s -p %s -a %s -d %s -R %s" % (config_file, dirpath + "/out", opts.kmer_size, opts.ncpu, opts.init_mem_assumption, opts.kmer_freq_cutoff, opts.output_extra_info)
+
     print cmd
 
     #Perform SOAPdenovo2_pregraph analysis
