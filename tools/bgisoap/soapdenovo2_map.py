@@ -58,9 +58,9 @@ def main():
     #TODO - Need to declare path to Galaxy
     #Code for adding directory path to other file required as output
     if opts.default_full_settings_type == "default":
-        cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer map -s %s -g %s" % (opts.soap_config, dirpath + "/out")
+        cmd = "SOAPdenovo-63mer map -s %s -g %s" % (opts.soap_config, dirpath + "/out")
     elif opts.default_full_settings_type == "full":
-        cmd = "/usr/local/bgisoap/soapdenovo2/bin/SOAPdenovo-63mer map -s %s -g %s -f %s -p % -k %s" % (opts.soap_config, dirpath + "/out", opts.output_gap_related_reads, opts.ncpu, opts.kmer_r2c)
+        cmd = "SOAPdenovo-63mer map -s %s -g %s -f %s -p % -k %s" % (opts.soap_config, dirpath + "/out", opts.output_gap_related_reads, opts.ncpu, opts.kmer_r2c)
 
     #Check
     print cmd
