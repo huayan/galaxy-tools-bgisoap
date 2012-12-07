@@ -17,6 +17,7 @@
     <tool file="bgisoap/prepare.xml"/>
     <label id="soapdenovo2_mods" text="SOAPdenovo2 modules"/>
     <tool file="bgisoap/soapdenovo2_pregraph.xml"/>
+    <tool file="bgisoap/soapdenovo2_pregraph_sparse.xml"/>
     <tool file="bgisoap/soapdenovo2_contig.xml"/>
     <tool file="bgisoap/soapdenovo2_map.xml"/>
     <tool file="bgisoap/soapdenovo2_scaff.xml"/>
