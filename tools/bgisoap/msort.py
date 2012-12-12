@@ -83,7 +83,9 @@ def __main__():
 
     #Clean up temp files
     cleanup_before_exit(dirpath)
-    stop_err('Error in running msort from (%s), %s' % (opts.infile, str(e)))
+    #12/12/2012, commented out by Huayan
+    #This will cause an error
+    #stop_err('Error in running msort from (%s), %s' % (opts.infile, str(e)))
 
     #Check results in output file
     if os.path.getsize(opts.outfile) > 0:
