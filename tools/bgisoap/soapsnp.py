@@ -94,10 +94,12 @@ def __main__():
 
     #Set up command line call
     #Need to fix to account for user configuration at run time
+    #12/12/2012, Huayan
+    # use the default 45 for opts.max_length_short_read since it is not set up
     if opts.default_full_settings_type == "default":
-        cmd = "soapsnp -i %s -d %s -o %s -r %s -e %s -t %s -u %s -L %s -M %s -m %s" % (
+        cmd = "soapsnp -i %s -d %s -o %s -r %s -e %s -t %s -u %s -L 45 -M %s -m %s" % (
         opts.soap_alignment, opts.ref_seq, opts.consensus_out, opts.novel_althom_prior_probability,
-        opts.novel_het_prior_probability, opts.ratio, opts.enable_rank_sum, opts.max_length_short_read,
+        opts.novel_het_prior_probability, opts.ratio, opts.enable_rank_sum,
         opts.quality_calibration_matrix_out, opts.enable_monoploid_calling)
     elif opts.default_full_settings_type == "full":
         cmd = "soapsnp -i %s -d %s -o %s -z %s -g %s -p %s -r %s -e %s -t %s -s %s -2 %s -a %s -b %s -j %s -k %s -u %s -n %s -m %s -q %s -M %s -L %s -Q %s -F %s" % (
