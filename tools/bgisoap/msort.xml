@@ -5,21 +5,21 @@
 
         ## Inputs
         --infile=$infile
+        --sort_specified_fields=$sort_specified_fields
 
         ##Output
         --outfile=$outfile
 
         ## Check if using default or custom parameters
         --default_full_settings_type=$default_full_settings.settings_type
-        #if $default_full_settings.settings_type == "full"
-        --line_delimiters=$line_delimiters
-        --num_lines_per_block=$num_lines_per_block
-        --field_delimiters=$field_delimiters
-        --reverse_sort=$reverse_sort
-        --ignore_char_case=$ignore_char_case
-        --treat_fields_as_num=$treat_fields_as_num
-        --treat_fields_as_num_or_string=$treat_fields_as_num_or_string
-        --sort_specified_fields=$sort_specified_fields
+        #if $default_full_settings.settings_type == "full":
+            --line_delimiters=$default_full_settings.line_delimiters
+            --num_lines_per_block=$default_full_settings.num_lines_per_block
+            --field_delimiters=$default_full_settings.field_delimiters
+            ##--reverse_sort=$default_full_settings.reverse_sort
+            ##--ignore_char_case=$default_full_settings.ignore_char_case
+            ##--treat_fields_as_num=$default_full_settings.treat_fields_as_num
+            ##--treat_fields_as_num_or_string=$default_full_settings.treat_fields_as_num_or_string
         #end if
     </command>
     <requirements>
@@ -27,7 +27,7 @@
     </requirements>
     <inputs>
         <param name="infile" type="data" format="input" label="Input table for sorting"/>
-
+        <param name="sort_specified_fields" type="text" value="n9" label="Specify fields for sorting"/>
         <conditional name="default_full_settings">
             <param name="settings_type" type="select" label="msort settings to use" help="For full control of this function, please use Full Parameter List">
                 <option value="default">Default</option>
@@ -37,15 +37,14 @@
             <when value="full">
                 <param name="line_delimiters" type="text" label="Specify line delimiters used in input file"/>
                 <param name="num_lines_per_block" type="integer" value="1" label="Specify multiple lines as blocks"/>
-                <param name="field_delimiters" type="text" label="Specify delimiters for fields"/>
+                <param name="field_delimiters" type="text" value="tab" label="Specify delimiters for fields"/>
                 <!-- Need to sort out the drop down menus for these 4 params -->
                 <!--
                 <param name="reverse_sort" type="text" label="Sort input data in reverse"/>
                 <param name="ignore_char_case" type="text" label="Ignore character cases"/>
                 <param name="treat_fields_as_num" type="text" label="Treat fields as numbers"/>
                 <param name="treat_fields_as_num_or_string" type="text" label="Treat fields as numbers or strings"/>
-                -->
-                <param name="sort_specified_fields" type="text" label="Specify fields for sorting"/>
+                -->           
             </when>
         </conditional>
     </inputs>
@@ -88,6 +87,13 @@ f3{red green blue}: sort column 3 , treat it as enum, ignore string case
 **Attribution**
 
 Msort was written by Ruan Jue at BGI-SZ.
+
+-----
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/about.html#resource2
+
     </help>
 </tool>
 

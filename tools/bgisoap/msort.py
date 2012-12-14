@@ -22,17 +22,17 @@ def __main__():
 
     #Input
     parser.add_option('', '--infile', dest='infile', help='Input tabular data')
+    parser.add_option('-k', '--sort_specified_fields', dest='sort_specified_fields', help='Specify fields for sorting')
 
     #Custom params
-    parser.add_option('', "--default_full_settings_type", dest="default_full_settings_type")
-    parser.add_option('-l', '--line_delimiters', dest='line_delimiters', help='Specify line delimiters')
+    parser.add_option("", "--default_full_settings_type", dest="default_full_settings_type")
+    parser.add_option("-l", "--line_delimiters", dest="line_delimiters", help="Specify line delimiters")
     parser.add_option('-L', '--num_lines_per_block', dest='num_lines_per_block', help='Specify multiple lines as blocks')
     parser.add_option('-t', '--field_delimiters', dest='field_delimiters', help='Specify delimiters for fields')
     parser.add_option('-r', '--reverse_sort', dest='reverse_sort', help='Sort input data in reverse')
     parser.add_option('-f', '--ignore_char_case', dest='ignore_char_case', help='Ignore character cases')
     parser.add_option('-n', '--treat_fields_as_num', dest='treat_fields_as_num', help='Treat fields as numbers')
     parser.add_option('-m', '--treat_fields_as_num_or_string', dest='treat_fields_as_num_or_string', help='Treat fields as numbers or strings')
-    parser.add_option('-k', '--sort_specified_fields', dest='sort_specified_fields', help='Specify fields for sorting')
 
     #Outputs
     parser.add_option("-o", "--outfile", dest='outfile', help="Sorted tabular data")
@@ -40,13 +40,14 @@ def __main__():
 
     #Need to write inputs to a temporary directory
     dirpath = tempfile.mkdtemp()
-
+    print opts.default_full_settings_type
+    print opts.line_delimiters
     #Set up command line call
     #Need to fix to account for user configuration at run time
     if opts.default_full_settings_type == "default":
-        cmd = "/usr/local/bgisoap/msort/current/bin/msort %s > %s" % (opts.infile, opts.outfile)
+        cmd = "msort -k %s %s > %s" % (opts.sort_specified_fields, opts.infile, opts.outfile)
     elif opts.default_full_settings_type == "full":
-        cmd = "/usr/local/bgisoap/msort/current/bin/msort -l %s -L %s -t %s -k %s" % (opts.line_delimiters, opts.num_lines_per_block, opts.field_delimiters, opts.sort_specified_fields)
+        cmd = "msort %s -l %s -L %s -t %s -k %s > %s" % (opts.infile, opts.line_delimiters, opts.num_lines_per_block, opts.field_delimiters, opts.sort_specified_fields, opts.outfile)
     print cmd
 
     #Run
@@ -79,7 +80,7 @@ def __main__():
 
     # TODO: look for errors in program output.
     except Exception, e:
-        raise Exception, 'Problem performing GapCloser process ' + str(e)
+        raise Exception, 'Problem performing msort process ' + str(e)
 
     #Clean up temp files
     cleanup_before_exit(dirpath)
