@@ -3,7 +3,7 @@
     <!-- Locations of all fasta files under genome directory -->
     <table name="2bwtbuilder_indexes" comment_char="#">
         <columns>value, dbkey, name, path</columns>
-        <file path="tool-data/soapsplice.loc" />
+        <file path="tool-data/soapsplice.loc" /> 
     </table>
     <!-- Locations of all fasta files under genome directory -->
     <table name="all_fasta" comment_char="#">

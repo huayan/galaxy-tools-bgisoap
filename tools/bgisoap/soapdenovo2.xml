@@ -9,8 +9,8 @@
         ## Reference source
         --file_source=$config_source.config_source_select
         #if $config_source.config_source_select == "history":
-            ##Select config from history
-            --config=$config_source.own_file
+            ##Select configuration from history
+            --configuration=$config_source.own_file
         #else:
             ##Create new config file
             ## Parameters required in config file
@@ -64,30 +64,30 @@
         ## Check if using default or custom parameters
         --default_full_settings_type=$default_full_settings.settings_type
         #if $default_full_settings.settings_type == "full"
-            --kmer_size=$kmer_size
-            --ncpu=$ncpu
-            --init_mem_assumption=$init_mem_assumption
-            --kmer_freq_cutoff=$kmer_freq_cutoff
-            --resolve_repeats=$resolve_repeats
-            --edge_cov_cutoff=$edge_cov_cutoff
-            --merge_level=$merge_level
-            --max_k=$max_k
-            --weight=$weight
-            --keep_avail_read=$keep_avail_read
-            --merge_clean_bubble=$merge_clean_bubble
-            --output_gap_related_reads=$output_gap_related_reads
-            --kmer_r2c=$kmer_r2c
-            --fill_gaps=$fill_gaps
-            --unmask_contigs=$unmask_contigs
-            --keep_contigs_connected=$keep_contigs_connected
-            --gap_len_diff=$gap_len_diff
-            --min_contig_len=$min_contig_len
-            --min_contig_cvg=$min_contig_cvg
-            --max_contig_cvg=$max_contig_cvg
-            --insert_size_upper_bound=$insert_size_upper_bound
-            --bubble_coverage=$bubble_coverage
-            --genome_size=$genome_size
-            --ass_visual=$ass_visual
+            --kmer_size=$default_full_settings.kmer_size
+            --ncpu=$default_full_settings.ncpu
+            --init_memory_assumption=$default_full_settings.init_memory_assumption
+            --kmer_freq_cutoff=$default_full_settings.kmer_freq_cutoff
+            --resolve_repeats=$default_full_settings.resolve_repeats
+            --edge_cov_cutoff=$default_full_settings.edge_cov_cutoff
+            --merge_level=$default_full_settings.merge_level
+            --max_k=$default_full_settings.max_k
+            --weight=$default_full_settings.weight
+            ##--keep_avail_read=$default_full_settings.keep_avail_read
+            --merge_clean_bubble=$default_full_settings.merge_clean_bubble
+            ##--output_gap_related_reads=$default_full_settings.output_gap_related_reads
+            --kmer_r2c=$default_full_settings.kmer_r2c
+            --fill_gaps=$default_full_settings.fill_gaps
+            --unmask_contigs=$default_full_settings.unmask_contigs
+            --keep_contigs_connected=$default_full_settings.keep_contigs_connected
+            --gap_len_diff=$default_full_settings.gap_len_diff
+            --min_contig_len=$default_full_settings.min_contig_len
+            --min_contig_cvg=$default_full_settings.min_contig_cvg
+            --max_contig_cvg=$default_full_settings.max_contig_cvg
+            --insert_size_upper_bound=$default_full_settings.insert_size_upper_bound
+            --bubble_coverage=$default_full_settings.bubble_coverage
+            --genome_size=$default_full_settings.genome_size
+            --ass_visual=$default_full_settings.ass_visual
         #end if
 
         ## Output files
@@ -97,12 +97,12 @@
     </command>
     <inputs>
         <conditional name="config_source">
-        <param name="config_source_select" type="select" label="Select a config file from history or create a new one?">
+        <param name="config_source_select" type="select" label="Select a configuration file from history or create a new one?">
             <option value="history">Use one from history</option>
-            <option value="create">Create new config file</option>
+            <option value="create">Create new configuration file</option>
         </param>
         <when value="history">
-            <param name="own_file" type="data" metadata_name="dbkey" label="Select config file from history" />
+            <param name="own_file" type="data" metadata_name="dbkey" label="Select configuration file from history" />
         </when>
         <when value="create">
             <param name="max_read_length"
@@ -310,6 +310,7 @@
                type="text"
                optional="true"
                label="Merge clean bubble before iterate"/>
+	<!--
         <param name="output_gap_related_reads"
                type="select"
                value="NO"
@@ -318,6 +319,7 @@
             <option value="NO">No</option>
             <option value="YES">Yes</option>
         </param>
+	-->
         <param name="kmer_r2c"
                type="integer"
                value="13"
@@ -418,15 +420,12 @@ SOAPdenovo is a novel short-read assembly method that can build a de novo draft 
 The program is specially designed to assemble Illumina GA short reads. It creates new opportunities for building
 reference sequences and carrying out accurate analyses of unexplored genomes in a cost effective way.
 
------
-
 **System requirements**
 
 SOAPdenovo2 is designed for assembling large plant and animal genomes, although it also works well on bacteria and
 fungal genomes. The code runs on 64-bit/32-bit Linux/MAC OSX systems with a minimum of 5G physical memory. Approximately
 150 GB of memory is required to process large genomes such as those of humans.
 
------
 
 **Notes**
 
@@ -444,8 +443,6 @@ long reads. Changes which have been made to SOAPdenovo-1 include:
 5. Asynchronous Input/Output (AIO) has been introduced to boost the performance of reading files.
 
 6. Information for visualization purposes has been made available after scaffolding.
-
------
 
 **Configuring SOAPdenovo2**
 
@@ -503,17 +500,12 @@ fastq sequence files are indicated by "q1=" and "q2=". Paired reads in a single 
 
 All of the above items in each library section are optional since the assembler assigns default values for most of them.
 
-
------
-
 **Output files**
 
 Two files are generated by SOAPdenovo2:
 
 1. The contig file contains sequences without mate pair information.
 2. The scafSeq file contains scaffold portions of the genome which have been reconstructed from contigs and gaps.
-
------
 
 **FAQ**
 
@@ -530,7 +522,6 @@ with the same rank would be used at the same time. For example, in a data set of
 five libraries with insert size 200-bp, 500-bp, 2-Kb, 5-Kb and 10-Kb, separately. It is desired that the pairs in each
 rank provide adequate physical coverage of the genome.
 
------
 
 **Format of output files**
 
@@ -567,5 +558,13 @@ rank provide adequate physical coverage of the genome.
 7. contigPosInscaff. Contigs' positions in each scaffold.
 8. bubbleInScaff. Contigs that form bubble structures in scaffolds. Every two contigs form a bubble and the contig with higher coverage will be kept in scaffold.
 9. scafStatistics. Statistic information of final scaffold and contig.
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/soapdenovo.html
+
+
     </help>
 </tool>

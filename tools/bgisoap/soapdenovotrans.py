@@ -66,7 +66,7 @@ def main():
         stop_err("Output config file cannot be opened for writing." + str(e))
 
     #Set up command line call - need to remove hard coded path
-    cmd = "/usr/local/bgisoap/soapdenovotrans/current/bin/SOAPdenovo-Trans-31kmer all -s %s -o %s" % (tmp_file, tmp_dir + "/result")
+    cmd = "SOAPdenovo-Trans-31kmer all -s %s -o %s" % (tmp_file, tmp_dir + "/result")
 #    cmd = "SOAPdenovo-Trans-31kmer all -s %s -o %s" % (tmp_file, tmp_dir + "/result")
 
     print cmd

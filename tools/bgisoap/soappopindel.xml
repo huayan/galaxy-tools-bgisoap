@@ -87,6 +87,14 @@ The results of SOAPpopindel are in Variant Call Format (VCF). Further informatio
 
 Please contact shaohj@genomics.cn.
 
+-----
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/SOAP-popIndel.html
+
     </help>
 </tool>
 

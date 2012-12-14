@@ -120,11 +120,11 @@ def main():
 
     #Set up command line call
     #Code for adding directory path to other file required as output
-    if opt.kmer_size <= 63 and opts.default_full_settings_type == "default":
+    if opts.kmer_size <= 63 and opts.default_full_settings_type == "default":
         cmd = "SOAPdenovo-63mer pregraph -s %s -o %s" % (config_file, dirpath + "/out")
-    elif opt.kmer_size <= 63  and opts.default_full_settings_type == "full":
+    elif opts.kmer_size <= 63  and opts.default_full_settings_type == "full":
         cmd = "SOAPdenovo-63mer pregraph -s %s -o %s -K %s -p %s -a %s -d %s -R %s" % (config_file, dirpath + "/out", opts.kmer_size, opts.ncpu, opts.init_mem_assumption, opts.kmer_freq_cutoff, opts.output_extra_info)
-    elif opt.kmer_size > 63 and opts.default_full_settings_type == "default":
+    elif opts.kmer_size > 63 and opts.default_full_settings_type == "default":
         cmd = "SOAPdenovo-127mer pregraph -s %s -K %s -o %s" % (config_file, opts.kmer_size, dirpath + "/out")
     else:
         cmd = "SOAPdenovo-127mer pregraph -s %s -o %s -K %s -p %s -a %s -d %s -R %s" % (config_file, dirpath + "/out", opts.kmer_size, opts.ncpu, opts.init_mem_assumption, opts.kmer_freq_cutoff, opts.output_extra_info)

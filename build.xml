@@ -6,6 +6,7 @@
     <property file="build.properties"/>
     <property name="galaxy.dir" location="./galaxy"/>
     <property name="tools.dir" location="./tools"/>
+    <property name="webpages.dir" location="./webpages"/>
     <property name="bgisoap.dir" location="./${tools.dir}/bgisoap"/>
     <property name="build.dir" location="./build"/>
     <property name="lib.dir" location="./lib"/>
@@ -70,7 +71,8 @@
         <copy todir="${galaxy.build.dir}">
             <fileset dir="${galaxy.src}">
                     <exclude name="**/*universe_wsgi.ini.sample"/>
-                <exclude name="**/*tool_data_table_conf.xml.sample"/>
+		<!-- Don't exclude shed_tool_data_table_conf.xml.samle file -->
+                <exclude name="**/tool_data_table_conf.xml.sample"/>
             </fileset>
         </copy>
         <!-- Copy bgisoap tooldep directory into build directory -->
@@ -88,18 +90,31 @@
         <!-- Need to insert the BGI SOAP declarations in the 3rd line of tool_config -->
         <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask"
                  classpath="${lib.dir}/xmltask.jar"/>
-        <xmltask source="./${galaxy.src}/tool_conf.xml.main" dest="${galaxy.build.dir}/tool_conf.xml">
+        <xmltask source="./galaxy-central/tool_conf.xml.main" dest="${galaxy.build.dir}/tool_conf.xml">
             <insert path="/toolbox" file="./galaxy/tool_config"/>
         </xmltask>
 
-        <!-- Need to copy files into galaxy build  -->
+        <!-- Need to copy bgisoap files into galaxy build  -->
         <mkdir dir="${galaxy.build.dir}/tools/bgisoap"/>
         <copy todir="${galaxy.build.dir}/tools/bgisoap">
             <fileset dir="${tools.dir}/bgisoap">
                 <exclude name="**/*.iml"/>
             </fileset>
         </copy>
-        <!-- Copy bgi soap code into build directory -->
+
+        <!-- Need to copy taverna files into galaxy build  -->
+        <mkdir dir="${galaxy.build.dir}/tools/taverna"/>
+        <copy todir="${galaxy.build.dir}/tools/taverna">
+            <fileset dir="${tools.dir}/taverna">
+            </fileset>
+        </copy>
+
+	<!-- Customized welcome pages-->
+	 <copy todir="${galaxy.build.dir}/static">
+	    <fileset dir="${webpages.dir}" />
+	 </copy>
+
+	<!-- Copy bgi soap code into build directory -->
         <copy file="${galaxy.dir}/galaxy.sh" todir="${galaxy.build.dir}"/>
 
         <replace file="${galaxy.build.dir}/galaxy.sh" propertyFile="./build.properties">

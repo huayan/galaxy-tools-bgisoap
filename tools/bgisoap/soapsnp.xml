@@ -30,38 +30,40 @@
         --default_full_settings_type=$default_full_settings.settings_type
         #if $default_full_settings.settings_type == "full"
             ## Need to ask user how they want to run SOAPsnp
-            --quality_calibration_matrix_setting=$quality_calibration_matrix_setting.include_calibration_matrix
-            #if $quality_calibration_matrix_setting.include_calibration_matrix == "yes"
-                --quality_calibration_matrix=$quality_calibration_matrix
-            #else
-                --output_calibration_matrix_setting=$output_calibration_matrix_setting
+            --quality_calibration_matrix_setting=$default_full_settings.quality_calibration_matrix_setting.include_calibration_matrix
+            ## modified by Huayan, still not working. 
+	    --output_calibration_matrix_setting="no"
+	    #if $default_full_settings.quality_calibration_matrix_setting.include_calibration_matrix == "yes":
+                --quality_calibration_matrix = $default_full_settings.quality_calibration_matrix_setting.quality_calibration_matrix
+            #elif $default_full_settings.quality_calibration_matrix_setting.include_calibration_matrix == "no" and $default_full_settings.quality_calibration_matrix_setting.output_calibration_matrix_setting == "yes":
+                --output_calibration_matrix_setting="yes"
             #end if
 
-            --include_snp_info=$snp_setting.include_snp_info
-            #if $snp_setting.include_snp_info == "yes"
-                --snp_info=$snp_info
+            --include_snp_info=$default_full_settings.snp_setting.include_snp_info
+            #if $default_full_settings.snp_setting.include_snp_info == "yes"
+                --snp_info=$default_full_settings.snp_setting..include_snp_info.snp_info
             #end if
 
-            --call_consensus_setting=$call_consensus_setting.use_specific_regions
-            #if $call_consensus_setting.use_specific_regions == "yes"
-                --specific_regions=$specific_regions
+            --call_consensus_setting=$default_full_settings.call_consensus_setting.use_specific_regions
+            #if $default_full_settings.call_consensus_setting.use_specific_regions == "yes"
+                --specific_regions=$default_full_settings.call_consensus_setting.specific_regions
             #end if
 
-            --quality_score_char=$quality_score_char
-            --global_error_dependency_coefficient=$global_error_dependency_coefficient
-            --pcr_error_dependency_coefficient=$pcr_error
-            --ratio=$ratio
-            --refine_snp_calling=$refine_snp_calling
-            --validated_het_prior=$validated_het_prior
-            --validated_althom_prior=$validated_althom_prior
-            --unvalidated_het_prior=$unvalidated_het_prior
-            --unvalidated_althom_rate=$unvalidated_althom_rate
-            --enable_rank_sum=$enable_rank_sum
-            --enable_binom_calc=$enable_binom_calc
-            --output_potential_snps=$output_potential_snps
-            --max_length_short_read=$max_length_short_read
-            --max_fastq_score=$max_fastq_score
-            --output_format=$output_format<!--extra_headers=$extra_headers--><!--call_specific_consensus_regions=$call_specific_consensus_regions-->
+            --quality_score_char=$default_full_settings.quality_score_char
+            --global_error_dependency_coefficient=$default_full_settings.global_error_dependency_coefficient
+            --pcr_error_dependency_coefficient=$default_full_settings.pcr_error
+            --ratio=$default_full_settings.ratio
+            --refine_snp_calling=$default_full_settings.refine_snp_calling
+            --validated_het_prior=$default_full_settings.validated_het_prior
+            --validated_althom_prior=$default_full_settings.validated_althom_prior
+            --unvalidated_het_prior=$default_full_settings.unvalidated_het_prior
+            --unvalidated_althom_rate=$default_full_settings.unvalidated_althom_rate
+            --enable_rank_sum=$default_full_settings.enable_rank_sum
+            --enable_binom_calc=$default_full_settings.enable_binom_calc
+            --output_potential_snps=$default_full_settings.output_potential_snps
+            --max_length_short_read=$default_full_settings.max_length_short_read
+            --max_fastq_score=$default_full_settings.max_fastq_score
+            --output_format=$default_full_settings.output_format<!--extra_headers=$extra_headers--><!--call_specific_consensus_regions=$call_specific_consensus_regions-->
         #end if
 
     </command>
@@ -335,8 +337,6 @@ quality, alignment, and recurring experimental errors. All these kinds of inform
 single quality score for each base in PHRED scale to measure the accuracy of consensus calling. Currently, it
 supports the alignment format of SOAPaligner.
 
-----
-
 **Output format**
 
 The result of SOAPsnp has 17 columns::
@@ -360,5 +360,13 @@ The result of SOAPsnp has 17 columns::
       15      Rank sum test p_value
       16      Average copy number of nearby region
       17      Whether the site is a dbSNP
+
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/soapsnp.html
+
     </help>
 </tool>

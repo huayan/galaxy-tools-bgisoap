@@ -70,8 +70,6 @@
 
 msort is a tool for sorting text files containing tabular data by rows.
 
------
-
 **How it works**
 
 A notation is used for specifying fields to be sorted, e.g.:
@@ -82,13 +80,11 @@ f2[6-]: sort 6-end of column 2, treat it as string, ignore case
 rfm3: reverse sort column 3, treat it as string or number, ignore string case
 f3{red green blue}: sort column 3 , treat it as enum, ignore string case
 
------
-
 **Attribution**
 
 Msort was written by Ruan Jue at BGI-SZ.
 
------
+**More information**
 
 For test data and more detailed information, click here_.
 

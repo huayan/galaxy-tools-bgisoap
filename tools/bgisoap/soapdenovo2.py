@@ -19,6 +19,8 @@ def main():
     #Parse command line
     parser = optparse.OptionParser()
     parser.add_option("", "--max_read_length", dest="max_read_length", help="Maximum read length")
+    parser.add_option("", "--file_source", dest="file_source", help="Select a configuration file from history or create a new one?")
+    parser.add_option("", "--configuration", dest="configuration", help="Select a configuration file from history or create a new one?")
 
     #Make list of params
     parser.add_option("", "--avg_ins", action="append", type="string", dest="avg_insert_list", help="Average insert size")
@@ -52,7 +54,7 @@ def main():
     #Custom params
     parser.add_option("-K", "--kmer_size", dest="kmer_size", help="kmer size")
     parser.add_option("-p", "--ncpu", dest="ncpu", help="Number of cpu for use")
-    parser.add_option("-a", "--init_mem_assumption", dest="init_mem_assumption", help="Memory assumption initialized to avoid further reallocation, unit G")
+    parser.add_option("-a", "--init_memory_assumption", dest="init_memory_assumption", help="Memory assumption initialized to avoid further reallocation, unit G")
     parser.add_option("-d", "--kmer_freq_cutoff", dest="kmer_freq_cutoff", help="kmers with frequency no larger than KmerFreqCutoff will be deleted")
     parser.add_option("-R", "--resolve_repeats", dest="resolve_repeats", help="Resolve repeats by reads")
     parser.add_option("-D", "--edge_cov_cutoff", dest="edge_cov_cutoff", help="Edges with coverage no larger than EdgeCovCutoff will be deleted")
@@ -85,7 +87,7 @@ def main():
     tmp_dir = tempfile.mkdtemp()
 
     if opts.file_source == "history":
-        config_file = opts.config
+        config_file = opts.configuration
     else:
         #Create temp file for configuration
         config_file = tempfile.NamedTemporaryFile(dir=tmp_dir).name
@@ -136,14 +138,14 @@ def main():
 
     #Set up command line call - assumes path to executable has been defined in users environment
     #Need to check kmer size to decide if to use SOAPdenovo-63mer or SOAPdenovo-127mer
-    if opt.kmer_size <= 63 and opts.default_full_settings_type == "default":
+    if opts.kmer_size <= 63 and opts.default_full_settings_type == "default":
         cmd = "SOAPdenovo-63mer all -s %s -o %s" % (config_file, tmp_dir + "/result")
-    elif opt.kmer_size <= 63 and opts.default_full_settings_type == "full":
-        cmd = "SOAPdenovo-63mer all -s %s -o %s -K %s -p %s -a %s -d %s -R %s -D %s -M %s -m %s -e %s -E %s -k %s -F %s -u %s -w %s -G %s -L %s -c %s -C %s -b %s -B %s -N %s -V %s" % (config_file, tmp_dir + "/result", opts.kmer_size, opts.ncpu, opts.init_mem_assumption, opts.kmer_freq_cutoff, opts.resolve_repeats, opts.edge_cov_cutoff, opts.merge_level, opts.max_k, opts.weight, opts.merge_clean_bubble, opts.kmer_r2c, opts.fill_gaps, opts.unmask_contigs, opts.keep_contigs_connected, opts.gap_len_diff, opts.min_contig_len, opts.min_contig_cvg, opts.max_contig_cvg, opts.insert_size_upper_bound, opts.bubble_coverage, opts.genome_size, opts.ass_visual)
-    elif opt.kmer_size >= 64 and opts.default_full_settings_type == "default":
+    elif opts.kmer_size <= 63 and opts.default_full_settings_type == "full":
+        cmd = "SOAPdenovo-63mer all -s %s -o %s -K %s -p %s -a %s -d %s -R %s -D %s -M %s -m %s -e %s -E %s -k %s -F %s -u %s -w %s -G %s -L %s -c %s -C %s -b %s -B %s -N %s -V %s" % (config_file, tmp_dir + "/result", opts.kmer_size, opts.ncpu, opts.init_memory_assumption, opts.kmer_freq_cutoff, opts.resolve_repeats, opts.edge_cov_cutoff, opts.merge_level, opts.max_k, opts.weight, opts.merge_clean_bubble, opts.kmer_r2c, opts.fill_gaps, opts.unmask_contigs, opts.keep_contigs_connected, opts.gap_len_diff, opts.min_contig_len, opts.min_contig_cvg, opts.max_contig_cvg, opts.insert_size_upper_bound, opts.bubble_coverage, opts.genome_size, opts.ass_visual)
+    elif opts.kmer_size >= 64 and opts.default_full_settings_type == "default":
         cmd = "SOAPdenovo-127mer all -s %s -o %s" % (config_file, tmp_dir + "/result")
     else:
-        cmd = "SOAPdenovo-127mer all -s %s -o %s -K %s -p %s -a %s -d %s -R %s -D %s -M %s -m %s -e %s -E %s -k %s -F %s -u %s -w %s -G %s -L %s -c %s -C %s -b %s -B %s -N %s -V %s" % (config_file, tmp_dir + "/result", opts.kmer_size, opts.ncpu, opts.init_mem_assumption, opts.kmer_freq_cutoff, opts.resolve_repeats, opts.edge_cov_cutoff, opts.merge_level, opts.max_k, opts.weight, opts.merge_clean_bubble, opts.kmer_r2c, opts.fill_gaps, opts.unmask_contigs, opts.keep_contigs_connected, opts.gap_len_diff, opts.min_contig_len, opts.min_contig_cvg, opts.max_contig_cvg, opts.insert_size_upper_bound, opts.bubble_coverage, opts.genome_size, opts.ass_visual)
+        cmd = "SOAPdenovo-127mer all -s %s -o %s -K %s -p %s -a %s -d %s -R %s -D %s -M %s -m %s -e %s -E %s -k %s -F %s -u %s -w %s -G %s -L %s -c %s -C %s -b %s -B %s -N %s -V %s" % (config_file, tmp_dir + "/result", opts.kmer_size, opts.ncpu, opts.init_memory_assumption, opts.kmer_freq_cutoff, opts.resolve_repeats, opts.edge_cov_cutoff, opts.merge_level, opts.max_k, opts.weight, opts.merge_clean_bubble, opts.kmer_r2c, opts.fill_gaps, opts.unmask_contigs, opts.keep_contigs_connected, opts.gap_len_diff, opts.min_contig_len, opts.min_contig_cvg, opts.max_contig_cvg, opts.insert_size_upper_bound, opts.bubble_coverage, opts.genome_size, opts.ass_visual)
 
     print cmd
 

@@ -30,6 +30,8 @@ def __main__():
     parser.add_option("", "--default_full_settings_type", dest="default_full_settings_type")
     parser.add_option('', '--quality_calibration_matrix_setting', dest='quality_calibration_matrix_setting',
         help='Check if user wants to include a quality calibration matrix')
+    parser.add_option('', '--output_calibration_matrix_setting', dest='output_calibration_matrix_setting',
+        help='Check if user wants to output a quality calibration matrix')
 
     parser.add_option("", "--include_snp_info", dest="include_snp_info",
         help="Check if user wants to include pre-formatted known SNP information in analysis")
@@ -96,18 +98,30 @@ def __main__():
     #Need to fix to account for user configuration at run time
     #12/12/2012, Huayan
     # use the default 45 for opts.max_length_short_read since it is not set up
+    cmd="test only. empty output."
+    print opts.default_full_settings_type
+    print opts.output_calibration_matrix_setting
+    print cmd
     if opts.default_full_settings_type == "default":
         cmd = "soapsnp -i %s -d %s -o %s -r %s -e %s -t %s -u %s -L 45 -M %s -m %s" % (
         opts.soap_alignment, opts.ref_seq, opts.consensus_out, opts.novel_althom_prior_probability,
         opts.novel_het_prior_probability, opts.ratio, opts.enable_rank_sum,
         opts.quality_calibration_matrix_out, opts.enable_monoploid_calling)
-    elif opts.default_full_settings_type == "full":
+    elif opts.default_full_settings_type == "full" and opts.output_calibration_matrix_setting == "yes":
         cmd = "soapsnp -i %s -d %s -o %s -z %s -g %s -p %s -r %s -e %s -t %s -s %s -2 %s -a %s -b %s -j %s -k %s -u %s -n %s -m %s -q %s -M %s -L %s -Q %s -F %s" % (
         opts.soap_alignment, opts.ref_seq, opts.consensus_out, opts.quality_score_char, opts.global_error_dependency_coefficient,
         opts.pcr_error_dependency_coefficient, opts.novel_althom_prior_probability, opts.novel_het_prior_probability,
         opts.ratio, opts.snp_info, opts.refine_snp_calling, opts.validated_het_prior, opts.validated_althom_prior,
         opts.unvalidated_het_prior, opts.unvalidated_althom_rate, opts.enable_rank_sum, opts.enable_binom_calc,
         opts.enable_monoploid_calling, opts.output_potential_snps, opts.quality_calibration_matrix_out,
+        opts.max_length_short_read, opts.max_fastq_score, opts.output_format)
+    else:
+        cmd = "soapsnp -i %s -d %s -o %s -z %s -g %s -p %s -r %s -e %s -t %s -s %s -2 %s -a %s -b %s -j %s -k %s -u %s -n %s -m %s -q %s -L %s -Q %s -F %s" % (
+        opts.soap_alignment, opts.ref_seq, opts.consensus_out, opts.quality_score_char, opts.global_error_dependency_coefficient,
+        opts.pcr_error_dependency_coefficient, opts.novel_althom_prior_probability, opts.novel_het_prior_probability,
+        opts.ratio, opts.snp_info, opts.refine_snp_calling, opts.validated_het_prior, opts.validated_althom_prior,
+        opts.unvalidated_het_prior, opts.unvalidated_althom_rate, opts.enable_rank_sum, opts.enable_binom_calc,
+        opts.enable_monoploid_calling, opts.output_potential_snps, 
         opts.max_length_short_read, opts.max_fastq_score, opts.output_format)
 
     print cmd

@@ -18,7 +18,7 @@
 #For log information, see ./paster.log
 
 GALAXY_RUN="./run.sh"
-GALAXY_USER="@user@"
+GALAXY_USER="huayan"
 
 case "$1" in
     start)

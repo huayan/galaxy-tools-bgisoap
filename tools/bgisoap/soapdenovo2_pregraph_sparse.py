@@ -125,11 +125,11 @@ def main():
 
     #Set up command line call
     #Code for adding directory path to other file required as output
-    if opt.kmer_size <= 63 and opts.default_full_settings_type == "default":
+    if opts.kmer_size <= 63 and opts.default_full_settings_type == "default":
         cmd = "pregraph_sparse_63mer.v1.0.3 pregraph_sparse -s %s -o %s -z %s" % (config_file, dirpath + "/out", opts.genome_size)
-    elif opt.kmer_size <= 63  and opts.default_full_settings_type == "full":
+    elif opts.kmer_size <= 63  and opts.default_full_settings_type == "full":
         cmd = "pregraph_sparse_63mer.v1.0.3 pregraph_sparse -s %s -o %s -z %s -K %s -g %s -d %s -e %s -R %s -r %s -p %s" % (config_file, dirpath + "/out", opts.genome_size, opts.kmer_size, opts.max_kmer_edge_length, opts.kmer_freq_cutoff, opts.kmer_edge_freq_cutoff, opts.output_extra_info, opts.run_mode, opts.ncpu)
-    elif opt.kmer_size > 63 and opts.default_full_settings_type == "default":
+    elif opts.kmer_size > 63 and opts.default_full_settings_type == "default":
         cmd = "pregraph_sparse_127mer.v1.0.3 pregraph_sparse -s %s -o %s -z %s" % (config_file, dirpath + "/out", opts.genome_size)
     else:
         cmd = "pregraph_sparse_127mer.v1.0.3 pregraph_sparse -s %s -o %s -z %s -K %s -g %s -d %s -e %s -R %s -r %s -p %s" % (config_file, dirpath + "/out", opts.genome_size, opts.kmer_size, opts.max_kmer_edge_length, opts.kmer_freq_cutoff, opts.kmer_edge_freq_cutoff, opts.output_extra_info, opts.run_mode, opts.ncpu)
