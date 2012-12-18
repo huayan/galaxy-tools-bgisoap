@@ -49,7 +49,7 @@ def __main__():
 
     #Set up command line call
     if opts.default_full_settings_type == "default":
-        cmd = "SNVtest %s %s %s %s %s" % (opts.chr_length, opts.input1_alleleqc, opts.input2_alleleqc, opt.snvtest, opt.output)
+        cmd = "SNVtest %s %s %s %s %s" % (opts.chr_length, opts.input1_alleleqc, opts.input2_alleleqc, opts.snvtest, opts.output)
     elif opts.default_full_settings_type == "full":
         cmd = "SNVtest %s %s %s %s %s -m %s -x %s -c %s -r %s -u %s -e %s -l %s -i %s -f %s -t %s -s %s" % (opts.chr_length, opts.input1_alleleqc, opts.input2_alleleqc, opt.snvtest, opt.output, opt.min_depth, opt.max_depth, opts.max_copy_num, opts.pvalue_rank_sum, opts.pvalue_mismatch_enrichment_repetitive_hits, opts.pvalue_mismatch_enrichment_read_ends, opts.relax_depth_requirement, opts.min_allele_freq, opts.allele_freq_requirement, opts.max_allele_freq, opts.pvalue_somatic_mut_detection)
 

@@ -79,8 +79,13 @@
 
 SOAPpileup is a tool for summarizing the base calls of aligned reads to a reference sequence. This tool performs a step
 required for SOAPsnv in the detection somatic mutation of single nucleotide variant (SNV) by re-sequencing. Together
-SOAPpileup, there are three other tools required in the SOAPsnv process: SNVtest, alleleQC and SNVdetect. Further
-information is available in their Galaxy tool pages.
+SOAPpileup, there are three other tools required in the SOAPsnv process: SNVtest, alleleQC and SNVdetect. 
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/SOAPsnv.html
 
     </help>
 </tool>

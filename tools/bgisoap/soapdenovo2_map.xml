@@ -28,7 +28,7 @@
         <param name="soap_config"
                type="data"
                format="input"
-               label="config output from SOAPdenovo2 contig"/>
+               label="configuration output from SOAPdenovo2 contig"/>
         <param name="contig"
                type="data"
                format="input"
@@ -106,5 +106,11 @@ by the SOAPdenovo2 map operation:
 1. peGrads. Information for each clone library: insert-size, read index upper bound, rank and pair number cutoff for a reliable link. This file can be revised manually for scaffolding tuning.
 2. readOnContig. Reads' locations on contigs. Contigs are referred by their edge index. However, about half of them are not listed in the .contig file for their reverse-complementary counterparts are included already.
 3. readInGap. This file includes reads that could be located in gaps between contigs. This information will be used to close gaps in scaffolds if the -F flag is set.
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/soapdenovo.html
     </help>
 </tool>

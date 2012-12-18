@@ -54,15 +54,15 @@ def __main__():
     #Set up command line call
     #Need to fix to account for user configuration at run time
     if opts.default_full_settings_type == "default":
-        cmd = "/usr/local/bgisoap/gapclo/current/GapCloser -a %s -b %s -o %s" % (dirpath + "/input.scaffold", dirpath + "/input.configinfo", dirpath + "/output.gapcloser")
+        cmd = "GapCloser -a %s -b %s -o %s" % (dirpath + "/input.scaffold", dirpath + "/input.configinfo", dirpath + "/output.gapcloser")
     elif opts.default_full_settings_type == "full":
-        cmd = "/usr/local/bgisoap/gapclo/current/GapCloser -a %s -b %s -o %s -l %s -p %s -t %s" % (dirpath + "/input.scaffold", dirpath + "/input.configinfo", "output.gapcloser", opts.max_read_len, opts.overlap_param, opts.thread_num)
+        cmd = "GapCloser -a %s -b %s -o %s -l %s -p %s -t %s" % (dirpath + "/input.scaffold", dirpath + "/input.configinfo", "output.gapcloser", opts.max_read_len, opts.overlap_param, opts.thread_num)
 
     print cmd
 
     #Run
     try:
-        tmp_out_file = tempfile.NamedTemporaryFile(dir=tmp_dir).name
+        tmp_out_file = tempfile.NamedTemporaryFile(dir=dirpath).name
         tmp_stdout = open(tmp_out_file, 'wb')
         tmp_err_file = tempfile.NamedTemporaryFile().name
         tmp_stderr = open(tmp_err_file, 'wb')

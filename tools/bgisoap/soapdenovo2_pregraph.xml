@@ -303,6 +303,8 @@ SOAPdenovo is a novel short-read assembly method that can build a de novo draft 
 The program is specially designed to assemble Illumina GA short reads. It creates new opportunities for building
 reference sequences and carrying out accurate analyses of unexplored genomes in a cost effective way.
 
+-----
+
 The pregraph step in SOAPdenovo2 is responsible for loading raw read data into memory and constructing the Bruijn graph
 structure which is used to represent the overlap between reads.
 
@@ -336,5 +338,11 @@ Output files from pregraph::
 **Authors**
 
 Ruibang Luo and Zhenyu Li, 2012-7-10
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/soapdenovo.html
     </help>
 </tool>

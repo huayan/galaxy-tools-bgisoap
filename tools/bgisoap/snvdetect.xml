@@ -81,8 +81,15 @@
 
 **What it does**
 
-alleleQC detects single nucleotide variants from pairs of data sets. The results of this tool is the final result of the
+SNVdetect detects single nucleotide variants from pairs of data sets. The results of this tool is the final result of the
 SOAPsnv process to detect single nucleotide variants.
+
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/SOAPsnv.html
 
     </help>
 </tool>

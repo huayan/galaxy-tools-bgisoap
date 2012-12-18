@@ -154,5 +154,10 @@ and out.preArc) to identify contigs made up of sequence reads that overlap with 
 3. updated.edge. Some information for each edge in graph: length, Kmers at both ends, index difference between the reverse-complementary edge and this one.
 4. ContigIndex. Each record gives information about each contig in the .contig. it's edge index, length, the index difference between its reverse-complementary counterpart and itself.
 
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/soapdenovo.html
     </help>
 </tool>

@@ -173,7 +173,7 @@ def main():
     file.close()
 
     edge_gz_out = open(opts.edge, 'wb')
-    with open(dirpath + "/out.edge.gz", mode='rb') as file: # b is important -> binary
+    with open(dirpath + "/out.edge.gz", mode='rb') as file: # b is important -> binary  
         fileContent = file.read()
         edge_gz_out.write(fileContent)
     edge_gz_out.close()

@@ -228,5 +228,11 @@ by the SOAPdenovo2 scaff operation:
 7. contigPosInscaff. Contigs' positions in each scaffold.
 8. bubbleInScaff. Contigs that form bubble structures in scaffolds. Every two contigs form a bubble and the contig with higher coverage will be kept in scaffold.
 9. scafStatistics. Statistic information of the final scaffold and its contigs.
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/soapdenovo.html
     </help>
 </tool>

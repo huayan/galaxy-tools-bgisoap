@@ -1,4 +1,5 @@
-<tool id="soap2" name="Map with SOAP 2" version="0.2">
+<tool id="soap2" name="soap2" version="0.2">
+    <description>- improved version of soap1</description>
     <requirements>
         <requirement type="package">bgisoap</requirement>
     </requirements>
@@ -201,6 +202,13 @@ SOAP2 (also known as SOAPaligner) is a member of the SOAP (Short Oligonucleotide
 Compared to version 1 of SOAP, SOAP2 is one order of magnitude faster so that, for example, it requires only 2 minutes to align one million single-end reads onto the human reference genome. Another improvement of SOAP2 is that it now supports a wide range of read lengths.
 
 SOAP2 made improvements in time and space efficiency by a re-implementing the basic data structures and algorithms used in SOAP1.The core algorithms and the indexing data structures (2way-BWT) were developed by T.W. Lam, Alan Tam, Simon Wong, Edward Wu and S.M. Yiu of the Algorithms Research group at the Department of Computer Science, the University of Hong Kong.
+
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/soapaligner.html
 
 </help>
 </tool>

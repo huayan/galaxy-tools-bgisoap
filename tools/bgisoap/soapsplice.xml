@@ -1,5 +1,5 @@
 <tool id="soapsplice" name="SOAPsplice" version="0.1">
-    <description>detection of splice junctions</description>
+    <description>- detection of splice junctions</description>
     <command interpreter="python">
         soapsplice.py
 
@@ -168,13 +168,11 @@
 
 SOAPsplice is a tool for the genome-wide ab initio detection of splice junction sites from RNA-Seq data. The tool performs better than the previous tools by detecting similar number of true junctions with lower false positives as the best performing tool in all different situations with different read lengths and coverage. In particular, SOAPsplice performs better by predicting more true junctions with low false positive rate when the coverage is low, which is useful for detecting the junctions for those mRNAs with relatively lower expression level. For more information, please refer to the part of "Performance Evaluation" in this page. SOAPsplice is free for academic use only.
 
------
 
 **How it works**
 
 To use SOAPsplice, short reads are searched against index files for a given reference genome are required. A selection of index files are available from the above drop down menu which have been built for use with BGI SOAP tools using the 2bwt-builder tool.
 
------
 
 **Outputs**
 
@@ -241,13 +239,11 @@ Two-segment alignment files end with a .2Segs suffix and contain the following c
          direction  The chain that the intron is on, "fwd" means it's on the direct chain, while "rev" means it's on the reverse chain.
             number  Number of reads supporting this junction.
 
------
 
 **Publication**
 
 Huang S, Zhang J, Li R, Zhang W, He Z, Lam T-W, Peng Z and Yiu S-M (2011) SOAPsplice: genome-wide ab initio detection of splice junctions from RNA-Seq data. Front. Gene. 2:46. doi: 10.3389/fgene.2011.00046
 
------
 
 
 **References**
@@ -257,6 +253,14 @@ Huang S, Zhang J, Li R, Zhang W, He Z, Lam T-W, Peng Z and Yiu S-M (2011) SOAPsp
 3. Trapnell, C., L. Pachter, et al. (2009). "TopHat: discovering splice junctions with RNA-Seq." Bioinformatics 25(9): 1105-11.
 4. Au, Kin Fai, Jiang, Hui, Lin, Lan, Xing, Yi, Wong, Wing Hung (2010). "Detection of splice junctions from paired-end RNA-seq data by SpliceMap." Nucleic Acids Research 38(14), 4570-4578.
 5. Wang, Kai et al. (2010). "MapSplice: accurate mapping of RNA-seq reads for splice junction discovery." Nucleic Acids Research 38(18), e178, doi:10.1093/nar/gkq622.
+
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/soapsplice.html
+
 
     </help>
 </tool>

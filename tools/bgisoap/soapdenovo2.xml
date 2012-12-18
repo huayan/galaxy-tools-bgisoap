@@ -1,5 +1,5 @@
 <tool id="soapdenovo2" name="SOAPdenovo2" version="0.1">
-    <description>- perform de novo genome assembly</description>
+    <description>- perform de novo genome assembly with optimized k-mer determination</description>
     <requirements>
         <requirement type="package">bgisoap</requirement>
     </requirements>

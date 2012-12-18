@@ -58,8 +58,14 @@
 
 **What it does**
 
-SNVtest uses Fisher's Exact Test to detect sites with significantly allele frequency change between normal and tumour
-tissues. The results of this tool is used by the SOAPsnv process to detect single nucleotide variants.
+SNVtest uses Fisher's Exact Test to detect sites with significantly allele frequency change between two populations. The results of this tool is used by the SOAPsnv process to detect single nucleotide variants.
+
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/SOAPsnv.html
+
 
     </help>
 </tool>

@@ -62,6 +62,12 @@
 alleleQC determines the quality of alleles for each sites using the results from the SOAPpileup. The results of this
 tool is used by the SOAPsnv process to detect single nucleotide variants.
 
+**More information**
+
+For test data and more detailed information, click here_.
+
+.. _here: http://soap.genomics.org.cn/SOAPsnv.html
+
     </help>
 </tool>
 
