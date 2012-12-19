@@ -35,7 +35,7 @@
     </inputs>
     <outputs>
         <data name="coverage" format="tabular"/>
-		    <data name="outdetail" format="text"/>
+	<data name="outdetail" format="text"/>
     </outputs>
 	<help>
 

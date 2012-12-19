@@ -396,12 +396,12 @@
         <data name="contig"
               type="data"
               format="output"
-              label="Contig sequence file">
+              label="soapdenovo2: Contig sequence file">
         </data>
         <data name="scafseq"
               type="data"
               format="output"
-              label="Scaffold sequence file ">
+              label="soapdenovo2: Scaffold sequence file">
         </data>
     </outputs>
     <tests>

@@ -15,14 +15,14 @@
   </command>
   <inputs>
   	<param name="scaffold" type="data" format="input" label="scaffold sequences need to be filled"/>
-  	<param name="library" type="data" format="input" label="config file for soapDenovo"/>
+  	<param name="library" type="data" format="input" label="configuration file for soapDenovo"/>
   	<param name="readlength" type="integer" label="maximal read length (&lt;=155)" value="100" max="155"/>
   	<param name="overlap" type="integer" label="overlap length to extend (&lt;=31)" value="25" max="31"/>
   	<param name="thread" type="integer" label="number of thread to use" value="1"/>
   </inputs>
   <outputs>
-  	<data name="output" format="fasta"/>
-  	<data name="stat" format="text"/>
+  	<data name="output" format="fasta" label="gapCloser scaffold sequences output"/>
+  	<data name="stat" format="text" label="gapCloser stat output"/>
   </outputs>
   <help>
 

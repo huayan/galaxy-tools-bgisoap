@@ -72,15 +72,15 @@
     <outputs>
         <data name="pegrads"
               format="text"
-              label="pegrads">
+              label="map: pegrads">
         </data>
         <data name="read_on_contig"
               format="text"
-              label="read on contig">
+              label="map: read on contig">
         </data>
         <data name="read_in_gap"
               format="text"
-              label="read in gap">
+              label="map: read in gap">
         </data>
     </outputs>
     <tests>
@@ -92,6 +92,7 @@
         </test>
     </tests>
     <help>
+
 **What it does**
 
 SOAPdenovo is a novel short-read assembly method that can build a de novo draft assembly for the human-sized genomes.

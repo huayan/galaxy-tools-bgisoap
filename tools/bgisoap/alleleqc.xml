@@ -12,13 +12,13 @@
         ## Check if using default or custom parameters
         --default_full_settings_type=$default_full_settings.settings_type
         #if $default_full_settings.settings_type == "full"
-        --min_depth=$min_depth
-        --max_depth=$max_depth
-        --test_sites=$test_sites
+        --min_depth=$default_full_settings.min_depth
+        --max_depth=$default_full_settings.max_depth
+        --test_sites=$default_full_settings.test_sites
         #end if
 
         ## Output file
-        --output=$output
+        --alleleqc_output=$alleleqc_output
 
     </command>
     <inputs>
@@ -43,7 +43,7 @@
         </conditional>
     </inputs>
     <outputs>
-        <data name="output" type="data" label="gz zipped results file"/>
+        <data name="alleleqc_output" format="text" label="gz zipped alleleqc file"/>
     </outputs>
     <tests>
         <test>
@@ -52,7 +52,7 @@
             -->
             <param name="depth" value="indexed"/>
             <param name="ploidy" value="2"/>
-            <output name="output" file="bwa_wrapper_out1.sam" ftype="sam" sort="True"/>
+            <output name="alleleqc_output" file="bwa_wrapper_out1.sam" ftype="sam" sort="True"/>
         </test>
     </tests>
     <help>

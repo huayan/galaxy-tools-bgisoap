@@ -106,19 +106,19 @@
     <outputs>
         <data name="contig"
               format="text"
-              label="contig">
+              label="contig: contig">
         </data>
         <data name="arc"
               format="text"
-              label="arc">
+              label="contig: arc">
         </data>
         <data name="updated_edge"
               format="text"
-              label="updated edge">
+              label="contig: updated edge">
         </data>
         <data name="contig_index"
               format="text"
-              label="contig index">
+              label="contig: contig index">
         </data>
     </outputs>
     <tests>

@@ -13,14 +13,15 @@
     <tool file="bgisoap/soapdenovo1.xml"/>
     <tool file="bgisoap/soapdenovo2.xml"/>
     <tool file="bgisoap/soapdenovotrans.xml"/>
-    <tool file="bgisoap/soapCoverage.xml"/>
-    <tool file="bgisoap/gapCloser.xml"/>
     <label id="soapdenovo2_mods" text="SOAPdenovo2 modules"/>
     <tool file="bgisoap/soapdenovo2_config.xml"/>
     <tool file="bgisoap/soapdenovo2_pregraph.xml"/>
     <tool file="bgisoap/soapdenovo2_contig.xml"/>
     <tool file="bgisoap/soapdenovo2_map.xml"/>
     <tool file="bgisoap/soapdenovo2_scaff.xml"/>
+    <label id="other_tools" text="Other related tools"/>   
+    <tool file="bgisoap/soapCoverage.xml"/>
+    <tool file="bgisoap/gapCloser.xml"/> 
   </section>
   <section name="NGS: Splice Detection" id="bgi_splice_detection">
       <tool file="bgisoap/soapsplice.xml"/>

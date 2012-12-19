@@ -164,39 +164,39 @@
     <outputs>
         <data name="new_contig_index"
               format="text"
-              label="new contig index">
+              label="scaffold: new contig index">
         </data>
         <data name="links"
               format="text"
-              label="links">
+              label="scaffold: links">
         </data>
         <data name="scaf_gap"
               format="text"
-              label="scaf gap">
+              label="scaffold: scaf gap">
         </data>
         <data name="scaf"
               format="text"
-              label="scaf">
+              label="scaffold: scaf">
         </data>
         <data name="gap_seq"
               format="text"
-              label="gap sequences between contigs">
+              label="scaffold: gap sequences between contigs">
         </data>
         <data name="scaf_seq"
               format="text"
-              label="scaffold sequences">
+              label="scaffold: scaffold sequences">
         </data>
         <data name="contig_positions_scaff"
               format="text"
-              label="contig positions in scaffolds">
+              label="scaffold: contig positions in scaffolds">
         </data>
         <data name="bubble_in_scaff"
               format="text"
-              label="bubbles in scaffolds">
+              label="scaffold: bubbles in scaffolds">
         </data>
         <data name="scaf_stats"
               format="text"
-              label="scaffold statistics">
+              label="scaffold: scaffold statistics">
         </data>
     </outputs>
     <tests>

@@ -65,7 +65,7 @@
         </conditional>
     </inputs>
     <outputs>
-        <data name="output" type="data" label="gz zipped results file"/>
+        <data name="output" type="data" format="text" label="gz zipped snvdetect file"/>
     </outputs>
     <tests>
         <test>

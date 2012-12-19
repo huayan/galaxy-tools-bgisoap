@@ -163,12 +163,12 @@ soap2.py
         <data name="alignment_out"
               type="data"
               format="output"
-              label="An alignment of paired reads on a reference sequence">
+              label="soap2: An alignment of paired reads on a reference sequence">
         </data>
         <data name="unpaired_alignment_out"
               type="data"
               format="output"
-              label="Unpaired alignment hits">
+              label="soap2: Unpaired alignment hits">
             <filter>analysis_settings.analysis_type == "paired"</filter>
         </data>
     </outputs>

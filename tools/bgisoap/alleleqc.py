@@ -29,17 +29,19 @@ def __main__():
     parser.add_option("-l", "--test_sites", dest="test_sites")
 
     #Outputs
-    parser.add_option("-o", "--output", dest='output', help="Results from pileup process")
+    parser.add_option("-o", "--alleleqc_output", dest='alleleqc_output', help="alleleqc output file from alleleQC process")
     opts, args = parser.parse_args()
 
     #Create temp directory
     tmp_dir = tempfile.mkdtemp()
 
+    #temp_output = tempfile.NamedTemporaryFile(dir=tmp_dir).name+".gz"
+
     #Set up command line call
     if opts.default_full_settings_type == "default":
-        cmd = "alleleQC %s %s" % (opts.pileup_input, opts.output)
+        cmd = "alleleQC %s %s" % (opts.pileup_input, opts.alleleqc_output)
     elif opts.default_full_settings_type == "full":
-        cmd = "alleleQC %s %s -m %s -x %s -l %s" % (opts.pileup_input, opts.output, opts.min_depth, opts.max_depth, opts.test_sites)
+        cmd = "alleleQC %s %s -m %s -x %s -l %s" % (opts.pileup_input, opts.alleleqc_output, opts.min_depth, opts.max_depth, opts.test_sites)
 
     print cmd
 
@@ -72,12 +74,21 @@ def __main__():
     except Exception, e:
         #Clean up temp files
         cleanup_before_exit(tmp_dir)
-        stop_err('Error in running alleleQC from (%s), %s' % (opts.output, str(e)))
+        stop_err('Error in running alleleQC from (%s), %s' % (opts.alleleqc_output, str(e)))
+
+    #pass the temp_output to opts.output
+    #gz_output = open(opts.alleleqc_output, 'wb')
+    #with open(temp_output, mode='rb') as file: # b is important -> binary
+    #    fileContent = file.read()
+    #    gz_output.write(fileContent)
+    #gz_output.close()
+    #file.close()
+    
 
     #Clean up temp files
     cleanup_before_exit(tmp_dir)
     #Check results in output file
-    if os.path.getsize(opts.output) > 0:
+    if os.path.getsize(opts.alleleqc_output) > 0:
         sys.stdout.write('Status complete')
     else:
         stop_err("The output is empty")

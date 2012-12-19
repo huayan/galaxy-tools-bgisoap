@@ -42,7 +42,7 @@
         </conditional>
     </inputs>
     <outputs>
-        <data name="output" type="data" label="gz zipped results file"/>
+        <data name="output" type="data" label="snvtest result file"/>
     </outputs>
     <tests>
         <test>

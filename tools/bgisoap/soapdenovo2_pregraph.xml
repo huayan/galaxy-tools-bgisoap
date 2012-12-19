@@ -265,27 +265,27 @@
     <outputs>
         <data name="kmer_freq"
               format="text"
-              label="kmer frequency">
+              label="pregraph: kmer frequency">
         </data>
         <data name="edge"
               format="text"
-              label="edge gzipped">
+              label="pregraph: edge gzipped">
         </data>
         <data name="pre_arc"
               format="text"
-              label="pre arc">
+              label="pregraph: pre arc">
         </data>
         <data name="vertex"
               format="text"
-              label="vertex">
+              label="pregraph: vertex">
         </data>
         <data name="pregraph_basic"
               format="text"
-              label="pregraph">
+              label="pregraph: pregraph">
         </data>
         <data name="soap_config"
               format="text"
-              label="configuration file">
+              label="pregraph: configuration file">
         </data>
     </outputs>
     <tests>
