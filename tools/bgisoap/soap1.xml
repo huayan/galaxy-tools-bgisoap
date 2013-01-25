@@ -29,18 +29,18 @@
         --default_full_settings_type=$default_full_settings.settings_type
 
         #if $default_full_settings.settings_type == "full"
-            --seed_size=$seed_size
-            --max_mismatches=$max_mismatches
-            --max_gap_size=$max_gap_size
-            --max_best_hits=$max_best_hits
-            --gap_exist=$gap_exist
-            --initial_quality=$initial_quality
-            --trim=$trim
-            --filter=$filter
-            --report_repeats=$report_repeats
-            --read_id=$read_id
-            --ref_chain_align=$ref_chain_align
-            --num_processors=$num_processors
+            --seed_size=$default_full_settings.seed_size
+            --max_mismatches=$default_full_settings.max_mismatches
+            --max_gap_size=$default_full_settings.max_gap_size
+            --max_best_hits=$default_full_settings.max_best_hits
+            --gap_exist=$default_full_settings.gap_exist
+            --initial_quality=$default_full_settings.initial_quality
+            --trim=$default_full_settings.trim
+            --filter=$default_full_settings.filter
+            --report_repeats=$default_full_settings.report_repeats
+            --read_id=$default_full_settings.read_id
+            --ref_chain_align=$default_full_settings.ref_chain_align
+            --num_processors=$default_full_settings.num_processors
         #end if
 
   </command>
